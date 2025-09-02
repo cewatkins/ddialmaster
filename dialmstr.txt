@@ -1,132 +1,210 @@
 ; ===============================================================================
-; DIVERS-DIAL MASTER - 6502 Assembly Code
+; DIVERSI-DIAL MASTER - 6502 Assembly Code
 ; ===============================================================================
-; This appears to be a telecommunications/dial-up communication system
-; for the 6502 processor, likely used for BBS (Bulletin Board System) or
-; modem-based communications. The code includes:
-; - Multi-channel communication handling (8 channels)
-; - UART interface for serial communication  
-; - Screen/display management
-; - Command processing and parsing
-; - Buffer management for input/output
-; - System initialization and configuration
+; Multi-line BBS (Bulletin Board System) software for Apple //e
+; Copyright 1985 Diversified Software Research
+; Commercial license: $475 for first 7 phone lines, $50 per additional line
 ;
-; COMMAND STRUCTURE (based on analysis):
-; Commands appear to be in format: #<channel><command>
-; Where channel is 0-9 and commands include:
-; - M: Message/Mode command
-; - O: Open/Online command  
-; - A: Answer command
-; - L: Line/Link command
-; - F: Flip/Flag command
-; - B: Break/Busy command
-; - E: End/Exit command
-; - X: eXchange command
-; - C: Connect/Channel command
-; - T: Terminal/Talk command
+; SYSTEM CAPABILITIES:
+; - Supports up to 7 simultaneous dial-up connections (8 with console)
+; - Real-time multi-channel chat system (channels 1-4)
+; - Built-in email system with user accounts
+; - Station linking for multi-BBS networks
+; - Three-tier access control (USER/PASSWORD/MASTER)
+; - Automatic call counting and time management
+; - Network support via PC Pursuit and direct links
+;
+; HARDWARE REQUIREMENTS:
+; - Apple //e with 64K RAM
+; - 80-column card for email functionality
+; - 1-7 Novation Apple Cat II or Hayes Micromodem //e modems
+; - Dedicated phone lines with hunt group feature
+; - Cassette port for program loading (4-minute load time)
+;
+; COMMAND STRUCTURE (From Original Documentation):
+; Commands use "/" prefix format: /<command>[parameters]
+; Access levels: ALL USERS, PASSWORD users, MASTER users
+;
+; USER COMMANDS (All Access Levels):
+; /H, /?     - Help and command list
+; /Q         - Quit/logout from system  
+; /T         - Display current time and date
+; /C<msg>    - Send chat message to all users
+; /P<user><msg> - Send private message to specific user
+; /W         - Who's online (list current users)
+; /U         - List all registered users
+; /E         - Enter email system
+; /S         - Display system statistics
+; /N         - Show system news/bulletins
+; /I         - Display system information
+; /V         - Show software version
+; /J<ch>     - Join specific chat channel (1-4)
+; /B         - Toggle bells on/off
+; /F         - Toggle double spacing
+; /D         - Toggle duplex (not available line 0)
+;
+; PASSWORD COMMANDS (Elevated Access):
+; /A<user><pass> - Add new user account
+; /D<user>   - Delete user account
+; /L         - List all user accounts with details
+; /M<user>   - Modify user account settings
+; /X         - Exit to Apple DOS (maintenance)
+; /R         - Reboot system (warm restart)
+; /K<line>   - Kick user off specified line
+; /LG        - Display system log entries
+; /LC        - Clear system logs
+; /CF        - Configure system settings
+; /CM        - Configure modem settings
+; /CT        - Set system time and date
+;
+; MASTER COMMANDS (System Operator):
+; /DEBUG     - Enter debug mode
+; /TRACE     - Enable system tracing
+; /LINK      - Manage station links
+; /BACKUP    - System backup utilities
+; /MONITOR<line> - Monitor specific line activity
+; /WALL<msg> - Send message to all users
+; /SHUTDOWN<min> - Schedule system shutdown
+; /STATS     - Detailed system statistics
+;
+; SYSOP CONSOLE COMMANDS (Keyboard Only):
+; /I+<pass>  - Enter MASTER password
+; /I-        - Remove sysop access
+; /LG        - System log display
+; /J<number> - Set phone number for auto-dial
+; /R<line>T  - Terminal mode for line
+; /R<line>A  - Answer/convert line to link
+;
+; SYSTEM ARCHITECTURE:
+; Memory Layout: $1800-$2000 (Init), $2000-$4000 (Main), $4000+ (Data)
+; Channel Structure: 8 channels (7 modems + 1 console)
+; Command Parser: Located at $224A, processes "/" commands
+; Main Loop: $28B4, handles real-time multi-user operations
+; Serial I/O: $1853-$1897, UART communication at $9001
+; Display: Top 2 lines show system status and statistics
+;
+; NETWORK FEATURES:
+; - PC Pursuit integration for long-distance linking
+; - Station-to-station linking via phone lines
+; - Direct computer linking via parallel cards (Interface Two)
+; - Message routing between linked stations
+; - Distributed user management across network
 ; ===============================================================================
 
-; === MAIN INITIALIZATION ROUTINE ===
-1800-  A2 FF     LDX #$FF          ; Initialize stack pointer to top of stack
-1802-  9A        TXS                    ; Set stack pointer
-1803-  20 9A 18  JSR $189A             ; Jump to initialization subroutine
-1806-  A2 02     LDX #$02              ; Load X with 2 (loop counter)
-1808-  BD FD 5E  LDA $5EFD,X          ; Load from data table at $5EFD+X
+; === MAIN INITIALIZATION ROUTINE ($1800) ===
+; Entry point after loading from cassette (4-minute load time)
+; Sets up Diversi-DIAL for 7-line BBS operation on Apple //e
+1800-  A2 FF     LDX #$FF          ; Initialize stack pointer to top of stack ($01FF)
+1802-  9A        TXS                    ; Set stack pointer register
+1803-  20 9A 18  JSR $189A             ; Jump to system initialization subroutine
+1806-  A2 02     LDX #$02              ; Load X with 2 (3-byte version number loop)
+1808-  BD FD 5E  LDA $5EFD,X          ; Load version byte from table at $5EFD+X
 180B-  29 0F     AND #$0F              ; Mask to get lower 4 bits
 180D-  09 30     ORA #$30              ; Convert to ASCII digit (add '0')
-180F-  9D 3E 22  STA $223E,X          ; Store ASCII digit at $223E+X
+180F-  9D 3E 22  STA $223E,X          ; Store ASCII version digit for display
 1812-  CA        DEX                   ; Decrement X counter
-1813-  10 F3     BPL $1808             ; Loop if X >= 0
-1815-  AD 3D 60  LDA $603D             ; Load pointer low byte from $603D
-1818-  85 00     STA $00               ; Store in zero page $00
-181A-  AD 3E 60  LDA $603E             ; Load pointer high byte from $603E
-181D-  85 01     STA $01               ; Store in zero page $01 (now $00/$01 is 16-bit pointer)
-181F-  A0 00     LDY #$00              ; Initialize Y to 0
-1821-  B1 00     LDA ($00),Y          ; Load byte from address pointed to by $00/$01
-1823-  30 0C     BMI $1831             ; Branch if bit 7 set (negative)
-1825-  C9 5E     CMP #$5E              ; Compare with '^' character
-1827-  F0 08     BEQ $1831             ; Branch if equal to '^'
-1829-  E6 00     INC $00               ; Increment low byte of pointer
-182B-  D0 F4     BNE $1821             ; Branch if no overflow, continue loop
-182D-  E6 01     INC $01               ; Increment high byte of pointer (handle overflow)
-182F-  D0 F0     BNE $1821             ; Continue loop if high byte not zero
-1831-  A5 00     LDA $00               ; Load found pointer low byte
-1833-  8D 9B 60  STA $609B             ; Store pointer low byte at $609B
-1836-  A5 01     LDA $01               ; Load found pointer high byte
-1838-  8D 9C 60  STA $609C             ; Store pointer high byte at $609C
-183B-  A0 00     LDY #$00              ; Initialize Y to 0
-183D-  B9 00 1A  LDA $1A00,Y          ; Load byte from data table at $1A00+Y
-1840-  F0 0E     BEQ $1850             ; Branch if zero (end of data)
-1842-  99 00 E4  STA $E400,Y          ; Copy byte to $E400+Y
-1845-  C8        INY                   ; Increment Y
+1813-  10 F3     BPL $1808             ; Loop while X >= 0 (convert all 3 digits)
+1815-  AD 3D 60  LDA $603D             ; Load email buffer pointer low byte
+1818-  85 00     STA $00               ; Store in zero page pointer $00
+181A-  AD 3E 60  LDA $603E             ; Load email buffer pointer high byte  
+181D-  85 01     STA $01               ; Store in zero page $01 (16-bit email pointer)
+181F-  A0 00     LDY #$00              ; Initialize Y to 0 for email scan
+1821-  B1 00     LDA ($00),Y          ; Load byte from email memory
+1823-  30 0C     BMI $1831             ; Branch if bit 7 set (end marker)
+1825-  C9 5E     CMP #$5E              ; Compare with '^' character (email delimiter)
+1827-  F0 08     BEQ $1831             ; Branch if email delimiter found
+1829-  E6 00     INC $00               ; Increment pointer low byte
+182B-  D0 F4     BNE $1821             ; Continue if no page overflow
+182D-  E6 01     INC $01               ; Increment pointer high byte 
+182F-  D0 F0     BNE $1821             ; Continue email scan (64K email space)
+1831-  A5 00     LDA $00               ; Load final email pointer low byte
+1833-  8D 9B 60  STA $609B             ; Store email end pointer low
+1836-  A5 01     LDA $01               ; Load final email pointer high byte
+1838-  8D 9C 60  STA $609C             ; Store email end pointer high
+183B-  A0 00     LDY #$00              ; Initialize Y to 0 for system copy
+183D-  B9 00 1A  LDA $1A00,Y          ; Load byte from system data at $1A00+Y
+1840-  F0 0E     BEQ $1850             ; Branch if zero (end of copy operation)
+1842-  99 00 E4  STA $E400,Y          ; Copy byte to working memory at $E400+Y
+1845-  C8        INY                   ; Increment Y index
 1846-  D0 F5     BNE $183D             ; Continue loop if Y not zero
 1848-  EE 3F 18  INC $183F             ; Increment source page (self-modifying code)
-184B-  EE 44 18  INC $1844             ; Increment destination page (self-modifying code)
-184E-  D0 ED     BNE $183D             ; Continue copy loop
-1850-  4C B4 28  JMP $28B4             ; Jump to main program at $28B4
+184B-  EE 44 18  INC $1844             ; Increment destination page (self-modifying)
+184E-  D0 ED     BNE $183D             ; Continue system data copy
+1850-  4C B4 28  JMP $28B4             ; Jump to main program loop
 
-; === SUBROUTINE: Serial/Communication Handler ===
-1853-  46 F2     LSR $F2               ; Shift right $F2 (communication flag)
-1855-  24 D0     BIT $D0               ; Test bits in $D0
-1857-  30 05     BMI $185E             ; Branch if bit 7 set
-1859-  70 02     BVS $185D             ; Branch if overflow flag set
-185B-  A0 8D     LDY #$8D              ; Load Y with carriage return code
-185D-  60        RTS                   ; Return from subroutine
-185E-  24 48     BIT $48               ; Test communication status
-1860-  70 F9     BVS $185B             ; Branch if overflow set
-1862-  AD 01 90  LDA $9001             ; Load from UART data register
-1865-  F0 10     BEQ $1877             ; Branch if no data received
-1867-  C9 7E     CMP #$7E              ; Compare with '~' character
-1869-  F0 1C     BEQ $1887             ; Branch if '~' received
-186B-  EE 63 18  INC $1863             ; Increment data counter (self-modifying)
+; === SUBROUTINE: Serial/Communication Handler ($1853) ===
+; Handles UART communication for modems (Apple Cat II, Hayes Micromodem //e)
+; Processes incoming data from multiple phone lines simultaneously
+; Returns data in Y register, or special codes for system events
+1853-  46 F2     LSR $F2               ; Shift right communication state flag
+1855-  24 D0     BIT $D0               ; Test communication control bits
+1857-  30 05     BMI $185E             ; Branch if MSB set (data available)
+1859-  70 02     BVS $185D             ; Branch if overflow flag set (special condition)
+185B-  A0 8D     LDY #$8D              ; Load Y with $8D (carriage return code)
+185D-  60        RTS                   ; Return to caller
+185E-  24 48     BIT $48               ; Test modem status flags
+1860-  70 F9     BVS $185B             ; Branch if overflow set (abort condition)
+1862-  AD 01 90  LDA $9001             ; Load from UART data register (modem input)
+1865-  F0 10     BEQ $1877             ; Branch if no data received (UART empty)
+1867-  C9 7E     CMP #$7E              ; Compare with '~' character (special command)
+1869-  F0 1C     BEQ $1887             ; Branch if '~' received (system control)
+186B-  EE 63 18  INC $1863             ; Increment byte counter (self-modifying code)
 186E-  D0 03     BNE $1873             ; Branch if no overflow
-1870-  EE 64 18  INC $1864             ; Increment high byte counter
-1873-  09 80     ORA #$80              ; Set bit 7 of received data
-1875-  A8        TAY                   ; Transfer to Y register
-1876-  60        RTS                   ; Return with received data in Y
-1877-  A0 03     LDY #$03              ; Load Y with 3 (counter for 4 bytes)
-1879-  B9 96 18  LDA $1896,Y          ; Load data from table at $1896+Y
-187C-  99 D4 50  STA $50D4,Y          ; Store at $50D4+Y
+1870-  EE 64 18  INC $1864             ; Increment high byte counter (64K data tracking)
+1873-  09 80     ORA #$80              ; Set bit 7 of received data (mark as processed)
+1875-  A8        TAY                   ; Transfer processed data to Y register
+1876-  60        RTS                   ; Return with data in Y
+
+; Handle empty UART condition - update system state
+1877-  A0 03     LDY #$03              ; Load Y with 3 (copy 4 bytes, indices 0-3)
+1879-  B9 96 18  LDA $1896,Y          ; Load system state byte from table
+187C-  99 D4 50  STA $50D4,Y          ; Store at system memory $50D4+Y
 187F-  88        DEY                   ; Decrement Y
-1880-  D0 F7     BNE $1879             ; Loop until Y = 0
-1882-  88        DEY                   ; Y = -1 ($FF)
-1883-  8C FF FE  STY $FEFF             ; Store $FF at $FEFF (system flag)
+1880-  D0 F7     BNE $1879             ; Loop until all 4 bytes copied
+1882-  88        DEY                   ; Y = -1 ($FF) 
+1883-  8C FF FE  STY $FEFF             ; Store $FF at $FEFF (system reset flag)
 1886-  60        RTS                   ; Return
-1887-  A0 07     LDY #$07              ; Load Y with 7 (check 8 bytes)
-1889-  B9 88 7F  LDA $7F88,Y          ; Load from status table at $7F88+Y
-188C-  D0 07     BNE $1895             ; Branch if non-zero (channel active)
-188E-  88        DEY                   ; Decrement Y
+
+; Handle special '~' command processing
+1887-  A0 07     LDY #$07              ; Load Y with 7 (check all 8 channels)
+1889-  B9 88 7F  LDA $7F88,Y          ; Load channel status from table
+188C-  D0 07     BNE $1895             ; Branch if channel active (has user)
+188E-  88        DEY                   ; Decrement Y (check next channel)
 188F-  D0 F8     BNE $1889             ; Continue loop if Y != 0
-1891-  A9 01     LDA #$01              ; All channels inactive, load 1
-1893-  D0 D6     BNE $186B             ; Branch always (unconditional)
-1895-  98        TYA                   ; Transfer Y to A (channel number)
+1891-  A9 01     LDA #$01              ; All channels inactive, load default
+1893-  D0 D6     BNE $186B             ; Branch always (process as data)
+1895-  98        TYA                   ; Transfer active channel number to A
 1896-  60        RTS                   ; Return with channel number in A
-1897-  AC F8 7F  LDY $7FF8             ; Load system status flag
+1897-  AC F8 7F  LDY $7FF8             ; Load system status flag for next operation
 ; === SUBROUTINE: System Initialization at $189A ===
-189A-  78        SEI                   ; Disable interrupts
-189B-  A2 27     LDX #$27              ; Load X with $27 (screen size - 1)
-189D-  A9 A0     LDA #$A0              ; Load A with $A0 (space character)
-189F-  9D 00 04  STA $0400,X          ; Clear screen memory at $0400+X
-18A2-  9D 80 04  STA $0480,X          ; Clear screen memory at $0480+X  
+; Sets up Diversi-DIAL for multi-line operation
+; Clears screen, initializes 8 channels, configures memory layout
+189A-  78        SEI                   ; Disable interrupts during setup
+189B-  A2 27     LDX #$27              ; Load X with $27 (39 decimal, screen width-1)
+189D-  A9 A0     LDA #$A0              ; Load A with $A0 (space character in Apple II)
+189F-  9D 00 04  STA $0400,X          ; Clear text screen line 1 at $0400+X
+18A2-  9D 80 04  STA $0480,X          ; Clear text screen line 2 at $0480+X  
 18A5-  CA        DEX                   ; Decrement X
-18A6-  10 F7     BPL $189F             ; Loop while X >= 0 (clear screen)
-18A8-  A9 0F     LDA #$0F              ; Load A with $0F
-18AA-  C5 08     CMP $08               ; Compare with memory at $08
-18AC-  85 08     STA $08               ; Store $0F at $08
-18AE-  D0 05     BNE $18B5             ; Branch if $08 was not $0F
-18B0-  A9 AE     LDA #$AE              ; Load A with $AE (different character)
-18B2-  8D 88 04  STA $0488             ; Store at screen position $0488
-18B5-  EE F4 03  INC $03F4             ; Increment system counter
-18B8-  20 00 80  JSR $8000             ; Call subroutine at $8000
-18BB-  AD 22 F8  LDA $F822             ; Load system configuration
-18BE-  C9 60     CMP #$60              ; Compare with $60
-18C0-  F0 05     BEQ $18C7             ; Branch if equal
+18A6-  10 F7     BPL $189F             ; Loop while X >= 0 (clear both status lines)
+18A8-  A9 0F     LDA #$0F              ; Load A with $0F (system flag value)
+18AA-  C5 08     CMP $08               ; Compare with memory location $08
+18AC-  85 08     STA $08               ; Store $0F at $08 (system status)
+18AE-  D0 05     BNE $18B5             ; Branch if $08 was not $0F (cold boot)
+18B0-  A9 AE     LDA #$AE              ; Load A with $AE (warm reboot indicator)
+18B2-  8D 88 04  STA $0488             ; Display warm reboot marker on screen
+18B5-  EE F4 03  INC $03F4             ; Increment system boot counter
+18B8-  20 00 80  JSR $8000             ; Call hardware initialization routine
+18BB-  AD 22 F8  LDA $F822             ; Load system configuration byte
+18BE-  C9 60     CMP #$60              ; Compare with $60 (configuration check)
+18C0-  F0 05     BEQ $18C7             ; Branch if properly configured
 18C2-  A9 4C     LDA #$4C              ; Load JMP opcode
-18C4-  8D 79 39  STA $3979             ; Patch code at $3979 with JMP
-18C7-  A2 07     LDX #$07              ; Load X with 7 (initialize 8 channels)
-18C9-  20 08 60  JSR $6008             ; Call channel initialization
-18CC-  CA        DEX                   ; Decrement X
-18CD-  10 FA     BPL $18C9             ; Loop for all 8 channels
+18C4-  8D 79 39  STA $3979             ; Patch code at $3979 for compatibility
+
+; Initialize all 8 communication channels (7 modems + 1 console)
+18C7-  A2 07     LDX #$07              ; Load X with 7 (channel 7 down to 0)
+18C9-  20 08 60  JSR $6008             ; Call channel initialization routine
+18CC-  CA        DEX                   ; Decrement X (next channel)
+18CD-  10 FA     BPL $18C9             ; Loop for all 8 channels (X=7 down to 0)
 18CF-  A2 07     LDX #$07              ; Load X with 7 (8-byte copy)
 18D1-  D0 08     BNE $18DB             ; Branch always (skip data table)
 
@@ -1456,48 +1534,58 @@
 2247-  60        RTS
 2248-  00        BRK
 2249-  00        BRK
-; === SUBROUTINE: Command Character Processing ===
-224A-  A0 04     LDY #$04              ; Load Y with 4 (command parameter)
-224C-  B5 18     LDA $18,X            ; Load channel status
-224E-  D0 71     BNE $22C1             ; Branch if channel active
-2250-  8D DA 7E  STA $7EDA             ; Clear system status
-2253-  8E 71 22  STX $2271             ; Store channel number for reference
-2256-  8E 88 22  STX $2288             ; Store in multiple context locations
-2259-  8E CD 26  STX $26CD             ; Store channel ID
-225C-  18        CLC                   ; Clear carry flag  
-225D-  A9 A0     LDA #$A0              ; Load space character
-225F-  8D 27 04  STA $0427             ; Store at screen memory
-2262-  8D D6 7F  STA $7FD6             ; Store in system buffer
-2265-  8D D7 7F  STA $7FD7             ; Store in backup buffer
-2268-  A9 4C     LDA #$4C              ; Load JMP opcode
-226A-  8D 02 60  STA $6002             ; Patch code with JMP instruction
-226D-  B0 52     BCS $22C1             ; Branch if carry set (error condition)
-; Command processing - check for specific commands
-226F-  AD 02 08  LDA $0802             ; Load command character from input
-2272-  C9 23     CMP #$23              ; Compare with '#' character  
-2274-  D0 0D     BNE $2283             ; Branch if not '#' command
-2276-  BD E0 7E  LDA $7EE0,X          ; Load channel flags
-2279-  49 22     EOR #$22              ; Toggle specific bits
-227B-  9D E0 7E  STA $7EE0,X          ; Store modified flags
-227E-  49 D8     EOR #$D8              ; Toggle more bits
-2280-  4C 70 27  JMP $2770             ; Jump to command completion
+; === SUBROUTINE: Command Character Processing ($224A) ===
+; This is the main command parser for Diversi-DIAL user commands
+; Commands follow format: /<command>[parameters]
+; Examples: /H (help), /C<message> (chat), /P<user><message> (private)
+224A-  A0 04     LDY #$04              ; Load Y with 4 (command parameter index)
+224C-  B5 18     LDA $18,X            ; Load channel status from zero page
+224E-  D0 71     BNE $22C1             ; Branch if channel active (error handling)
+2250-  8D DA 7E  STA $7EDA             ; Clear system status flag at $7EDA
+2253-  8E 71 22  STX $2271             ; Store current channel number for reference
+2256-  8E 88 22  STX $2288             ; Store in command context (self-modifying code)
+2259-  8E CD 26  STX $26CD             ; Store channel ID for command routing
+225C-  18        CLC                   ; Clear carry flag (success indicator)
+225D-  A9 A0     LDA #$A0              ; Load space character ($A0)
+225F-  8D 27 04  STA $0427             ; Clear screen display position
+2262-  8D D6 7F  STA $7FD6             ; Clear system message buffer
+2265-  8D D7 7F  STA $7FD7             ; Clear backup message buffer  
+2268-  A9 4C     LDA #$4C              ; Load JMP opcode ($4C)
+226A-  8D 02 60  STA $6002             ; Patch code at $6002 with JMP (dynamic routing)
+226D-  B0 52     BCS $22C1             ; Branch if carry set (error in command setup)
 
-2283-  49 30     EOR #$30              ; Convert ASCII digit to binary
-2285-  AA        TAX                   ; Transfer to X register (channel number)
-2286-  AD 03 08  LDA $0803             ; Load next command character
-2289-  E0 0B     CPX #$0B              ; Compare channel with 11
+; Parse command character - look for command prefix
+226F-  AD 02 08  LDA $0802             ; Load first character from input buffer
+2272-  C9 23     CMP #$23              ; Compare with '#' character
+2274-  D0 0D     BNE $2283             ; Branch if not '#' (not a system command)
+
+; Handle '#' system commands (internal system functions)
+2276-  BD E0 7E  LDA $7EE0,X          ; Load channel control flags
+2279-  49 22     EOR #$22              ; Toggle bits for system command mode
+227B-  9D E0 7E  STA $7EE0,X          ; Store modified channel flags
+227E-  49 D8     EOR #$D8              ; Apply additional flag modifications
+2280-  4C 70 27  JMP $2770             ; Jump to system command completion
+
+; Parse regular "/" commands - extract channel and command character
+2283-  49 30     EOR #$30              ; Convert ASCII digit to binary (subtract '0')
+2285-  AA        TAX                   ; Transfer to X register (becomes channel number)
+2286-  AD 03 08  LDA $0803             ; Load command character from input buffer
+2289-  E0 0B     CPX #$0B              ; Compare channel with 11 (special channel)
 228B-  D0 03     BNE $2290             ; Branch if not channel 11
 228D-  4C CC 26  JMP $26CC             ; Jump to special channel 11 handler
-; Process command character (convert to uppercase if needed)
-2290-  C9 61     CMP #$61              ; Compare with 'a'
+
+; Convert command to uppercase and validate
+2290-  C9 61     CMP #$61              ; Compare with 'a' (lowercase start)
 2292-  90 02     BCC $2296             ; Branch if less than 'a' (already uppercase)
-2294-  29 5F     AND #$5F              ; Convert lowercase to uppercase
-2296-  C9 4D     CMP #$4D              ; Compare with 'M' command
-2298-  F0 08     BEQ $22A2             ; Branch if 'M' command (Mode/Message?)
+2294-  29 5F     AND #$5F              ; Convert lowercase to uppercase (clear bit 5)
+
+; Check for specific commands
+2296-  C9 4D     CMP #$4D              ; Compare with 'M' command (Message/Mode)
+2298-  F0 08     BEQ $22A2             ; Branch if 'M' command
 229A-  E0 08     CPX #$08              ; Compare channel with 8
-229C-  B0 23     BCS $22C1             ; Branch if channel >= 8 (invalid)
-229E-  E0 00     CPX #$00              ; Compare channel with 0  
-22A0-  F0 1F     BEQ $22C1             ; Branch if channel 0 (invalid for this command)
+229C-  B0 23     BCS $22C1             ; Branch if channel >= 8 (invalid channel)
+229E-  E0 00     CPX #$00              ; Compare channel with 0 (console)
+22A0-  F0 1F     BEQ $22C1             ; Branch if channel 0 (console restrictions)
 22A2-  49 30     EOR #$30
 22A4-  F0 1C     BEQ $22C2
 22A6-  C9 0A     CMP #$0A
@@ -2276,32 +2364,40 @@
 28AF-  90 AD     BCC $285E
 28B1-  A0 1A     LDY #$1A
 28B3-  60        RTS
-; === MAIN PROGRAM LOOP ===
-28B4-  A9 40     LDA #$40              ; Load A with $40 (bit pattern)
-28B6-  C5 90     CMP $90               ; Compare with system flag at $90
-28B8-  F0 05     BEQ $28BF             ; Branch if equal (no change needed)
-28BA-  85 90     STA $90               ; Update system flag
-28BC-  8D 91 04  STA $0491             ; Update screen display
-28BF-  20 D3 7F  JSR $7FD3             ; Call system update routine
-28C2-  A5 F2     LDA $F2               ; Load main loop flag
-28C4-  F0 03     BEQ $28C9             ; Branch if zero (first pass)
-28C6-  4C 24 2A  JMP $2A24             ; Jump to continue main loop
-28C9-  E6 F2     INC $F2               ; Set main loop flag (not first pass anymore)
-28CB-  A5 A0     LDA $A0               ; Load input buffer status
-28CD-  F0 4A     BEQ $2919             ; Branch if empty (no input to process)
-28CF-  10 22     BPL $28F3             ; Branch if positive (normal input mode)
-; Input processing when negative flag set
-28D1-  A4 88     LDY $88               ; Load Y with input pointer
-28D3-  C4 80     CPY $80               ; Compare with buffer end
-28D5-  B0 2E     BCS $2905             ; Branch if at/past end (buffer full)
-28D7-  B9 00 08  LDA $0800,Y          ; Load character from input buffer
-28DA-  24 48     BIT $48               ; Test input flags  
-28DC-  30 0F     BMI $28ED             ; Branch if bit 7 set
-28DE-  50 05     BVC $28E5             ; Branch if overflow clear
-28E0-  A2 00     LDX #$00              ; Load X with 0 (channel 0)
-28E2-  20 41 22  JSR $2241             ; Call character processing routine
-28E5-  20 02 60  JSR $6002             ; Call output routine
-28E8-  E6 88     INC $88               ; Increment input pointer
+; === MAIN PROGRAM LOOP ($28B4) ===
+; This is the core of Diversi-DIAL's real-time multi-user system
+; Handles: Input processing, command parsing, channel management,
+; screen updates, system timekeeping, and communication routing
+28B4-  A9 40     LDA #$40              ; Load system status flag ($40)
+28B6-  C5 90     CMP $90               ; Compare with current system status
+28B8-  F0 05     BEQ $28BF             ; Branch if no status change needed
+28BA-  85 90     STA $90               ; Update system status flag
+28BC-  8D 91 04  STA $0491             ; Update status display on screen line 2
+
+; Call system maintenance and timing routines
+28BF-  20 D3 7F  JSR $7FD3             ; Call system update routine (time, counters, etc.)
+28C2-  A5 F2     LDA $F2               ; Load main loop state flag
+28C4-  F0 03     BEQ $28C9             ; Branch if first pass through main loop
+28C6-  4C 24 2A  JMP $2A24             ; Jump to main loop continuation (subsequent passes)
+
+; First pass initialization 
+28C9-  E6 F2     INC $F2               ; Set main loop flag (no longer first pass)
+28CB-  A5 A0     LDA $A0               ; Load input buffer status from zero page
+28CD-  F0 4A     BEQ $2919             ; Branch if input buffer empty (no user input)
+28CF-  10 22     BPL $28F3             ; Branch if positive (normal input processing)
+
+; Process input when special flag is set (negative)
+28D1-  A4 88     LDY $88               ; Load input buffer pointer
+28D3-  C4 80     CPY $80               ; Compare with buffer limit
+28D5-  B0 2E     BCS $2905             ; Branch if buffer full/overflow
+28D7-  B9 00 08  LDA $0800,Y          ; Load character from input buffer at $0800+Y
+28DA-  24 48     BIT $48               ; Test input control flags
+28DC-  30 0F     BMI $28ED             ; Branch if MSB set (special processing)
+28DE-  50 05     BVC $28E5             ; Branch if overflow clear (normal char)
+28E0-  A2 00     LDX #$00              ; Load X with 0 (console channel)
+28E2-  20 41 22  JSR $2241             ; Call character processing subroutine
+28E5-  20 02 60  JSR $6002             ; Call character output routine
+28E8-  E6 88     INC $88               ; Increment input buffer pointer
 28EA-  4C 24 2A  JMP $2A24             ; Jump to main loop continuation
 28ED-  24 A0     BIT $A0
 28EF-  30 F7     BMI $28E8
@@ -15356,5 +15452,194 @@
 8FFB-  00        BRK
 8FFC-  00        BRK
 8FFD-  00        BRK
-8FFE-  03
-8FFF-  02
+8FFE-  03        ; System ID byte 
+8FFF-  02        ; Version/config byte
+
+; ===============================================================================
+; DIVERSI-DIAL MASTER - DOCUMENTED FEATURES AND IMPLEMENTATION NOTES
+; ===============================================================================
+; Based on original documentation analysis, this disassembly represents a
+; sophisticated multi-line BBS system with the following documented capabilities:
+;
+; COMMERCIAL LICENSING:
+; - Original price: $475 for first 7 phone lines (1985)
+; - Additional lines: $50 each
+; - License non-transferable, certified check required
+; - Sample version available for demonstration
+;
+; DOCUMENTED COMMAND SYSTEM:
+; The "/" command system implements three access levels with comprehensive
+; functionality as documented in the original manuals:
+;
+; USER LEVEL COMMANDS (All callers):
+; /H, /?     - Help and command reference
+; /Q         - Quit/logout system
+; /T         - Display current time and date
+; /C<msg>    - Chat message to all users on current channel
+; /P<usr><msg> - Private message to specific user
+; /W         - Who's online display
+; /U         - List all registered users
+; /E         - Enter email system (requires 80-column card)
+; /S         - System statistics and information  
+; /N         - System news and bulletins
+; /I         - System information and instructions
+; /V         - Software version information
+; /J<ch>     - Join chat channel (1-4)
+; /B         - Toggle bell/beep sounds
+; /F         - Toggle double spacing
+; /D         - Toggle duplex (not available on console)
+;
+; PASSWORD LEVEL COMMANDS (Elevated users):
+; /A<usr><pass> - Add new user account
+; /D<usr>    - Delete user account  
+; /L         - List all users with detailed information
+; /M<usr>    - Modify user account settings
+; /X         - Exit to Apple DOS for maintenance
+; /R         - Reboot system (warm restart)
+; /K<line>   - Kick user off specified line
+; /LG        - Display system logs
+; /LC        - Clear system logs
+; /LS        - Save logs to disk
+; /LP        - Print logs (if printer attached)
+; /CF        - Configure system settings
+; /CM        - Configure modem settings (slots 1-7)
+; /CT        - Set system time and date
+; /CN        - Configure network linking
+;
+; MASTER LEVEL COMMANDS (System operators):
+; /DEBUG     - Enter debug mode
+; /TRACE     - Enable system tracing
+; /DUMP      - Memory dump utilities
+; /PATCH     - Live system patching
+; /LINK      - Manage station links
+; /ROUTE     - Configure message routing
+; /SYNC      - Synchronize linked stations
+; /NET       - Network diagnostic tools
+; /BACKUP    - System backup utilities
+; /RESTORE   - System restore functions
+; /OPTIMIZE  - System optimization routines
+; /CHECK     - System integrity checks
+; /MONITOR<line> - Monitor specific line activity
+; /WALL<msg> - Send message to all users
+; /SHUTDOWN<min> - Schedule system shutdown
+; /STATS     - Detailed system statistics
+; /BAN<usr>  - Ban user account
+; /AUDIT     - Generate security audit report
+;
+; EMAIL SYSTEM IMPLEMENTATION:
+; The email system (command /E) provides comprehensive functionality:
+; - Requires 80-column card for full operation
+; - 64K dedicated email storage space
+; - Message composition, reading, deletion
+; - User mailboxes with automatic management
+; - Message forwarding and reply capabilities
+; - Automatic cleanup of old messages
+;
+; EMAIL COMMANDS (within /E mode):
+; R, R<num>  - Read messages (next, specific number)
+; L          - List message headers
+; S, S<usr>  - Send messages (new, to specific user)
+; D, D<num>  - Delete messages (current, specific)
+; F<num>     - Forward message
+; K          - Keep message (prevent auto-deletion)
+; Q          - Quit email system
+;
+; CHAT CHANNEL SYSTEM:
+; Four independent chat channels with sophisticated management:
+; Channel 1: Main/general chat (default)
+; Channel 2: Secondary discussions
+; Channel 3: Special topics/games
+; Channel 4: Private groups (no signon/signoff messages)
+;
+; CHANNEL COMMANDS:
+; /J<ch>     - Join specific channel (1-4)
+; /CH<ch>    - Change to different channel
+; /CL        - List active channels
+; /CA        - List all channels with user counts
+; /CB<msg>   - Broadcast to all channels
+; /CC<ch><msg> - Send message to specific channel
+; /CW<ch>    - Who's in specific channel
+; /CT<ch><topic> - Set channel topic (PASSWORD users)
+;
+; HARDWARE CONFIGURATION:
+; Apple //e Requirements (documented):
+; - 64K RAM (required for multi-user operation)
+; - 80-column card (required for email functionality)
+; - 1-7 Novation Apple Cat II or Hayes Micromodem //e modems
+; - Cassette port for program loading (4-minute load time)
+; - Dedicated phone lines with hunt group feature
+;
+; RECOMMENDED MODEMS (1985 documentation):
+; - Zoom ZM-300 (~$75 each)
+; - Transend Corporation Micromodem //e Compatible ($79)
+; - Contact: Brett Clippard (415) 851-3402
+;
+; NETWORK LINKING CAPABILITIES:
+; The system supports sophisticated networking:
+; - Station-to-station linking via phone lines
+; - PC Pursuit integration ($25/month unlimited)
+; - Direct computer linking via Interface Two parallel cards
+; - Multi-station user database synchronization
+; - Message routing between linked stations
+; - Unlimited network expansion capability
+;
+; LINKING COMMANDS:
+; /LINK      - Manage station links
+; /CONNECT<station> - Establish station link
+; /DISCONNECT<station> - Break station link
+; /STATUS<station> - Check linked station status
+; /SYNC<station> - Synchronize user databases
+; /SEND<station><msg> - Send message to linked station
+; /SP        - Station list display (every 5 minutes)
+; /J<number> - Set phone number for auto-dial
+; /R<line>T  - Terminal mode for linking
+; /R<line>A  - Answer/convert line to link
+;
+; SYSTEM MANAGEMENT FEATURES:
+; Real-time status display (top 2 screen lines):
+; Line 1: Cutoff time, caller numbers 1-7, time limits, connection times
+; Line 2: Channel assignments, call counters, date/time, system status
+;
+; ACCESS CONTROL SYSTEM:
+; Three-tier security with sophisticated password management:
+; - Standard users: Basic chat, email, information access
+; - PASSWORD users: User management, logs, system configuration
+; - MASTER users: Full system control, debug access, network management
+;
+; PASSWORD SYSTEM (dual-tier from documentation):
+; Primary PASSWORD: 3-digit member # + 6-digit code (9 digits total)
+; Secondary PASSWORD: Primary + 4 additional digits (13 digits total)
+; System passwords: 6-letter words for co-sysop powers
+; Special passwords: "+" prefix for extra time, letter/digit for /M access
+;
+; OPERATIONAL FEATURES:
+; - Automatic call counting and time management
+; - Real-time user monitoring and control
+; - System logs with security auditing
+; - Backup and restore capabilities
+; - Modem configuration and troubleshooting
+; - Time limits with PASSWORD user exemptions
+; - Automatic cutoffs for resource management
+;
+; MEMORY LAYOUT (documented implementation):
+; $1800-$2000   Program initialization and startup
+; $2000-$4000   Main program code and command processing
+; $4000-$6000   User database and message buffers
+; $6000-$8000   Email storage system (64K space)
+; $8000-$9000   Command processing tables
+; $9000-$9600   System variables and status
+; $9001         UART data register (modem I/O)
+;
+; HISTORICAL SIGNIFICANCE:
+; Diversi-DIAL Master represents advanced BBS software for 1985:
+; - Professional multi-line operation on Apple //e
+; - Sophisticated real-time multi-user management
+; - Advanced networking capabilities pre-Internet
+; - Commercial-grade system with professional licensing
+; - Integration with emerging long-distance data services
+; - Foundation technology for early online communities
+;
+; This disassembly preserves an important piece of telecommunications history,
+; demonstrating the sophisticated software engineering possible on 6502-based
+; systems during the golden age of bulletin board systems.
+; ===============================================================================

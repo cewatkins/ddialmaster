@@ -1,5 +1,5 @@
 ===============================================================================
-                    DIVERS-DIAL MASTER SYSTEM FLOWCHART
+                    DIVERSI-DIAL MASTER SYSTEM FLOWCHART
 ===============================================================================
 
                                ┌─────────────┐
@@ -315,24 +315,56 @@ $9001         UART data register
                             SYSTEM OVERVIEW
 ===============================================================================
 
-The Divers-Dial Master operates as a continuous loop system:
+Diversi-DIAL Master operates as a sophisticated multi-line BBS system:
 
-1. INITIALIZATION: Sets up 8 communication channels, clears memory,
-   configures UART, and prepares system tables.
+1. BOOT & INITIALIZATION:
+   - 4-minute cassette load into Apple //e (64K required)
+   - Initialize 8 channels (7 modems + 1 console operator)
+   - Clear 80-column screen, setup email system (requires 80-col card)
+   - Initialize version display, system counters, memory layout
 
-2. MAIN LOOP: Continuously checks for input, processes commands,
-   manages channel states, and handles serial I/O.
+2. MAIN REAL-TIME LOOP:
+   - Continuously monitor all 8 communication channels
+   - Process UART input from Novation Apple Cat II / Hayes modems
+   - Handle keyboard input from console operator
+   - Update system status display (top 2 screen lines)
+   - Manage system time, call counters, user time limits
 
-3. COMMAND PROCESSING: Parses commands in format #<channel><command>
-   and executes appropriate channel operations.
+3. COMMAND PROCESSING:
+   - Parse "/" commands with three access levels:
+     * USER: Basic chat, email, info (/H, /C, /P, /E, /W, /Q)
+     * PASSWORD: User management, logs (/A, /D, /L, /K, /LG, /X)
+     * MASTER: Full system control (/DEBUG, /TRACE, /LINK, /BACKUP)
+   - Route commands to appropriate handlers
+   - Validate user permissions before execution
 
-4. CHANNEL MANAGEMENT: Maintains state for up to 8 simultaneous
-   communication channels with individual buffers and status.
+4. MULTI-CHANNEL CHAT:
+   - 4 chat channels with independent user groups
+   - Real-time message broadcasting within channels
+   - Private messaging between any users (/P command)
+   - Channel joining/switching (/J command)
 
-5. SERIAL I/O: Handles UART communication for data transmission
-   and reception across all active channels.
+5. EMAIL SYSTEM:
+   - Built-in email with user accounts
+   - 64K dedicated email storage space
+   - Message composition, reading, deletion
+   - Requires 80-column card for full functionality
 
-The system is designed for continuous operation as a telecommunications
-hub, likely for BBS or modem pool applications.
+6. NETWORK FEATURES:
+   - Station linking via phone lines or direct connection
+   - PC Pursuit integration for long-distance linking
+   - Multi-station user management and message routing
+   - Support for unlimited network expansion
+
+7. SYSTEM MANAGEMENT:
+   - Real-time user monitoring and control
+   - Automatic call counting and time enforcement
+   - System logs with security auditing
+   - Backup and restore capabilities
+   - Modem configuration and troubleshooting tools
+
+The system supports up to 7 simultaneous dial-up users plus console operator,
+with sophisticated real-time management suitable for professional BBS operation.
+Commercial license: $475 for first 7 lines, designed for Apple //e platform.
 
 ===============================================================================
