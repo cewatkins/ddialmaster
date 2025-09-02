@@ -1,0 +1,400 @@
+ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³ This copy of the documentation is edited to remove memory locations and    ³
+³ an index.                                                                  ³
+³                           Diversi Dial Documentation                       ³
+³           For Systems Executing Diversi-Modifications aka "VZ mods"        ³
+³                    And Extended Modifications aka "Ff mods"                ³
+³                                                                            ³
+³       Extended Modifications is a trademark of Paradise Software Systems   ³
+³       (C) Copyright 1989, 1990 All Rights Reserved.                        ³
+³                                                                            ³
+³                                                                            ³
+³       Diversi-Modifications is a trademark of Technically Advanced Software³
+³       Creations. Copyright 1988                                            ³
+³                                                                            ³
+³       Diversi-Dial is a trademark of Diversified Software Research.        ³
+³       Copyright 1985.                                                      ³
+³                                                                            ³
+³                                                                            ³
+³Diversi-Dial with Diversi-Modifications & Extended Modifications            ³
+³Documentation                                                               ³
+³Unless otherwise stated, the following conventions will apply:              ³
+³'nn'  Where a double digit Number is called for                             ³
+³'c'   Where a channel is called for                                         ³
+³'n'   Where a single digit number is called for                             ³
+³'x'   Where a letter or other character is called for                       ³
+³'txt' Where a line of text is called for                                    ³
+³'hh'  Where a Hex number or hours is called for                             ³
+³'CON'  Where the command is Console only                                    ³
+³'SYS'  Where Sysop only (also applies to remote /I+ Sysop)                  ³
+³'FULL' Where the command is a Full co (/Qxxxx) operation                    ³
+³'BABY' Where the command is a Baby co (/Q<xxxx) operation                   ³
+³'SUB'  Where The Command is available to Subscribers                        ³
+³'TIME' Where The Command is available to those with a /V                    ³
+³'MSG'  Where the command is available to Message password holders           ³
+³BLANK  Where The Command is available to everyone                           ³
+³'#000' Where The Command is available only to the #000 PASSWORD             ³
+³/?         Display Help Menu                                                ³
+³/Ann       Set Rotating message interval                           CON      ³
+³           This command toggles ON/OFF with each use.                       ³
+³/B         Turn BELLS on/off                                                ³
+³/Csn       Set time limits for 'S'ubs and 'N'ons                   CON      ³
+³           /C69 Subscribers 60 min. Nonsubscribers 9 Min.                   ³
+³/CB        Beep the Console (From line 0, toggles /CB ON/OFF       FULL     ³
+³/CD        Decrease Console Speed  (300 baud)  :See /II            CON      ³
+³/CI        Increase Console Speed  (600 baud)  :See /II            CON      ³
+³/CH        Remove Handle from link /SP                                      ³
+³/CK        Kill all non timed nonsubs                             BABY      ³
+³/CL        Don't display logons (not a filter for logINs)                   ³
+³/CM        Previously undocumented - ignore NONsub logon/off                ³
+³/CR        Turn Caret display on/off on your line                           ³
+³/CS        Don't display /SP's  to your line                                ³
+³/CW        Temporarily Disconnect to answer call waiting                    ³
+³/D         Duplex toggle: Unavailable to line 0                             ³
+³/E         Read Email                                              SUB      ³
+³/Ennn      Check Time of Last email read by user 'nnn'             SUB      ³
+³/Ennn<txt> Send Email message to user number 'nnn'                 SUB      ³
+³/Ennn,nnn.. Send a duplicate letter to users 'nnn,nnn,nnn,etc.'    SUB      ³
+³/E?        Display Email buffer level where 8000 is full           FULL     ³
+³           and Month of oldest Email letter.                                ³
+³/E#nnn     Check how many letters are waiting to be read           FULL     ³
+³           FROM user 'nnn'                                                  ³
+³/E*nnn     Delete Email sent by user 'nnn'                         CON      ³
+³/E*999     Clear out mail that has been read                       CON      ³
+³           Normally performed once an hour.                                 ³
+³/E*%       Delete Mail all mail indicated by the Month in /e?      CON      ³
+³/E-nnn     Delete mail from user 'nnn' that are sent to you.       SUB      ³
+³/F         Double spacing On/Off                                            ³
+³/FS        Turn Self Echo On/off                                            ³
+³/Gn        Give line 'n' the access indicated by /Ux990            FULL     ³
+³           Togglable by sysop (see /LG & /Ux990)                            ³
+³/Hxxxx     Enter a handle                                                   ³
+³/Hnxxx     Enter a handle for line 'n'                             FULL     ³
+³/I/        Toggle /IF0 access; Doesn't affect /IF1 to /IF7         CON      ³
+³/I         Instructions and console commands (only #0 can see second half)  ³
+³/I1        Password info    /---------------------------------------        ³
+³/I2        Channel info <-- reflects changes made by /R commands   :        ³
+³/I3        /K Log          \ including /RnX and /RnC               :        ³
+³/I4        Copyright information, Addresses and Console Commands            ³
+³/I+xxxxxx  Enter MASTER password                                            ³
+³/I-        Remove Sysop access from your line                      SYS      ³
+³/I#nnn     Display current password for user number 'nnn'          SYS      ³
+³           ==> /UxUSR nnn nnn SSSS    is returned                           ³
+³           where 'x' is the status of the password:                         ³
+³           - is devalled, + is normal, A is alt A, etc.                     ³
+³           USR is the user number, 'nnn nnn' is the actual password         ³
+³           'SSSS' is the secondary password. (not usually needed)           ³
+³           ,Month Year (,MY) is optional. defaulted to current month        ³
+³/I#nnn,MY  Display password for Month and Year for user 'nnn'      SYS      ³
+³/IEnnn,MY  Same as /I#, except output is routed to email                    ³
+³           See /U 980 for options.                                          ³
+³                                                                            ³
+³     Month 1  2  3  4  5  6  7  8  9  10 11 12 13 14 15                     ³
+³     Hex   1  2  3  4  5  6  7  8  9  A  B  C  D  E  F    (values for 'M')  ³
+³                                                                            ³
+³     Year  90 91 92 93 94 95 96 97 98 99                                    ³
+³           80 81 82 83 84 ...............etc.                               ³
+³           0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F (values for 'Y')  ³
+³                                                                            ³
+³           01/89 would be 19 and 11/75 would be B5                          ³
+³           or      /I#000,19      or     /IE000,B5                          ³
+³           Note that a hex value must be entered for a month                ³
+³           beyond the 9th.  this can also be applied to years.              ³
+³           so if you're really paranoid, you can use a hex value            ³
+³           for the year.                                                    ³
+³                                                                            ³
+³/IFn<txt>  Force data into the buffer at line 'n'                  SYS      ³
+³           Hit Escape after using this command, because it has              ³
+³           a repeating feature, much like /Pn*                              ³
+³/I@$HHHH HH Put byte 'hh' at HEX address 'HHHH'(must be in CAPS)   SYS      ³
+³           Toggle with /IO to turn the command on/off                       ³
+³           Memory locations are included with the authorized documentation  ³
+³/I;        Enter login message 79 character max. ;=return          SYS      ³
+³/IB        Sysop Scroll back buffer (see notes)                    CON      ³
+³/ICttttt,ddd Set Total and Daily call counters                     SYS      ³
+³/II        Increase/Decrease screen speed (Turbo version of /CI)   CON      ³
+³/ILnn      Set System Lock duration for /K (see /Ux991)            SYS      ³
+³/IMx       Set Locked message (where 'x' is normally set for Z)    SYS      ³
+³/IN        Enter new MASTER password                               SYS      ³
+³/IO        Toggle Online Modifications command access              CON      ³
+³/IRx       NEXT message to rotate is 'x' (1-9, A-Z) in CAPS        SYS      ³
+³/IQ        Enter new co password                                   SYS      ³
+³/IQ=       Enter new /q password list (for messages and baby       SYS      ³
+³           co and flagdown passwords (see /Q=)                              ³
+³/ISnn      Set link /SP interval.                                  SYS      ³
+³/IW        Set number of nonsubs that can WAIT for someone to      SYS      ³
+³           logon. (Normally set to 2 to allow 1 person unlimited            ³
+³           time to wait for a second person to call)                        ³
+³/Jnnnnnnn/n Set Remote dialup number and highest line number to    CON      ³
+³           dial from.                                                       ³
+³/Kn        Kill (disconnect) line number 'n'                       BABY/TIME³
+³/KnS       Slowly Kill line 'n'                                    BABY     ³
+³/L         Linefeeds toggle on/off                                          ³
+³/L         Sysop Lurk Mode (Occurs automatically if sysop          CON      ³
+³           doesn't speak publically for more than 8 minutes)                ³
+³/LG        Toggle remote /G access on/off                          CON      ³
+³/Mx        Read message slot 'x'                                            ³
+³/Mx=       Enter message slot 'x' start with a ';' to rotate       MSG & FUL³
+³           MSG password must start with a number or letter in               ³
+³           CAPS for the message to be rotatable.                            ³
+³           to LINK messages, type /Mx=<message here> n\                     ³
+³           where "n\" signifies how many messages to link; example:         ³
+³           /M1=this is message one 2\    { link next TWO messages           ³
+³           /M2=this is message two       { to this one.                     ³
+³           /M3=this is message three                                        ³
+³/N         Enter master password from console (works only ONCE     CON      ³
+³           Then /IN must be used. MUST be first command entered.            ³
+³/Oxxx      Enter Message to appear after locked message            CON      ³
+³           (put your address here. Note this will not work if               ³
+³            you have changed /I1 in any way)                                ³
+³/Pn        Send a private message to line 'n'                               ³
+³/PS        Send a System private (only those on the /P'd station   TIME     ³
+³           will see the message)                                            ³
+³/Pn* or /Pnnnnn* (on links) will LOCK your /P's into that line number       ³
+³           Escape or Control U will abort this feature.                     ³
+³/Q         Log off                                                          ³
+³/Qxxxx     Enter CO/Baby co/Message/Flagdown password              SUB /G   ³
+³/Qxxxx     Changes FULL co password, from line #0                  CON      ³
+³/Q=        Enter New password list, separated by spaces            CON      ³
+³           ex: /Q=Alpha brat <car *Norm +big                                ³
+³           < is a baby co, * is flagdown, + is unlimited time               ³
+³           and flagdown, capitol is rotatable message                       ³
+³           rotating messages must be started with a semicolon.              ³
+³/Qx        Enter coflag character, where 'x' is "<" or "["         CON      ³
+³           You can use the online mod command to change the CO              ³
+³           flag character to anything you like, within certain              ³
+³           limits.                                                          ³
+³/R;x       Where 'x' is the character to force line 0 to type.     #000     ³
+³           /R; with nothing forces a return from line 0.                    ³
+³           /R; from line 0, toggles this command on/off                     ³
+³/Rnx       Where 'n' is line number, and 'x' is number of rings    FULL     ³
+³           modem should wait before answering.                              ³
+³           /Rn0 will exercise modems (for those that don't hangup properly) ³
+³/RnA       Remote line 'n' in ANSWER mode                          FULL     ³
+³/RnB       Block /SP and print bells from line 'n' (see /Ux984)    FULL     ³
+³/RcC       do not allow macros on channel 'c'                      FULL     ³
+³/RnX       Do not allow macros on line 'n'                         FULL     ³
+³          * Note: A majority of people can type fast enough to              ³
+³           cause the above two commands to auto /k them.                    ³
+³/RnD       Activate Dual channel link for line 'n'                 FULL     ³
+³           Primary  : 1 2 3 4                                               ³
+³           Secondary: 2 1 4 3                                               ³
+³           A Dualchannel link is indicated by - instead of =                ³
+³           in the /S                                                        ³
+³/RnE       Accept / Send mail to line 'n'                          FULL     ³
+³           For stations running on two apples                               ³
+³/RnF       Ignore line 'n' for FULL status (for a temporary line   FULL     ³
+³           used by the sysop, or a bbs, etc..)                     FULL     ³
+³/RnK       Toggable /K immunity for line 'n'                       FULL     ³
+³/RnL       Relog line 'n'                                          FULL     ³
+³/RnM       Set Maximum number of users on current channel          FULL     ³
+³           0 for COs only, 9 for Quiet, 2 for private                       ³
+³           Check the setting with /I2                                       ³
+³/RnO       Never used.. Remote line 'n' in ORIGINATE mode          FULL     ³
+³/RnP       Enter terminal mode with line 'n' Control-G to exit     FULL     ³
+³/RcR       Send Remotes to channel 'c' at logon                    FULL     ³
+³/RcS       Send Subscribers to channel 'c' at logon                FULL     ³
+³/RnT       Dial Number set by /J and go into terminal mode with    FULL     ³
+³           line 'n'.  Control-G to exit.                                    ³
+³           If you plan to be in terminal mode for an extended time,         ³
+³           it is a good idea to ut both yourself and the remoted            ³
+³           line on an unused channel, because Ddial will force you          ³
+³           out of terminal mode, once your buffer fills or someone          ³
+³           changes your handle(s)                                           ³
+³/RnZ       Put a Twit on Channel Z, where they are limited to 1    FULL     ³
+³           character per line. From that point on, only the twit            ³
+³           will be able to see himself.   [See 'Other Features']            ³
+³           (This is most effective on twits who don't give up)              ³
+³/R#        Increase line length by an extra 40 characters          FULL     ³
+³           Note: Mr Basham doesn't reccomend this command be used           ³
+³           to send link email.  Some characters may get lost.               ³
+³/S         Show callers currently connected                                 ³
+³/S#        Condensed /S (will display those in remote lurk mode)            ³
+³                                   Normal /S with line 5 logging on:        ³
+³           #1<T1:bob) 040/#052*                                             ³
+³           #3(T1:frank) 003                                                 ³
+³           #4[T2:jack) 032/#337$                                            ³
+³                                   Condensed with line 5 logging on:        ³
+³           040*... 003 032$000!                                             ³
+³           052         337                                                  ³
+³Note that user number is on second line, where time is on top line.         ³
+³also note that line 5 has 000 time AND a ! to indicate that Ddial has a     ³
+³carrier. "000!" would appear as "...!" until a carrier is detected.         ³
+³/SP        Displays a list of callers on the system.  This command          ³
+³           only works during links, and usually is timed like rotating      ³
+³           messages.                                                        ³
+³                                                                            ³
+³/Tc        Tune to channel 'c'                                     SUB/TIME ³
+³                                                                            ³
+³/Tcn       Tune line 'n' to channel 'c'                            BABY     ³
+³                                                                            ³
+³          [All /U Commands are FULL co commands Unless otherwise noted]     ³
+³                                                                            ³
+³/Ux999     - LOCK         Prevent Non Password holders from logging on      ³
+³           + UNLOCK       Allow Access to all callers                       ³
+³/Ux998     - Self Squelch ON   Prevent nonsubs from /P'ing P/W holders      ³
+³           + Self Squelch OFF   ^Toggable through /X by Sub^                ³
+³/Ux997     - Print nonsub logon to T1 only                                  ³
+³           + Print nonsub logon to ALL channels                             ³
+³/Ux996     - 3 minute cut off when full                                     ³
+³           A 2 minute cut off when full                                     ³
+³           + Normal cut off when FULL                                       ³
+³/Ux995     - Nons not allowed to /P (A /V Toggles this)                     ³
+³           + Normal                                                         ³
+³/Ux994     - >256 are guests                                                ³
+³           + >256 are Subs    Must Use Secondary (last 4 digits)            ³
+³                              Handle Is Not Saved In List                   ³
+³/Ux993     - >100 can't /T2                                                 ³
+³           + All can         (All With Time)                                ³
+³                                                                            ³
+³                                                                            ³
+³/Ux992     - No secondary required       (A Secondary Password Gives Email )³
+³           + Secondary password Required (and /Q password privileges      ) ³
+³                                                                            ³
+³/Ux991     - Lock upon /K      (Adjust Time Period with /ILnn)              ³
+³           + Don't lock on /K                                               ³
+³                                                                            ³
+³/Ux990     - /G gives baby co access                                        ³
+³           + /G gives unlimited time                                        ³
+³                                                                            ³
+³/Ux989     - Subs can /K      :Votes are inactive so long as a:             ³
+³           + Subs can't /K    :Co is flagged up and online -  :             ³
+³           A 2 vote minimum   :This includes flagged links.   :             ³
+³           B 3 vote minimum                                                 ³
+³                                                                            ³
+³/Ux988     - Nons allowed on link                                           ³
+³           + Subs only                                                      ³
+³           B Guests & subs (or those with a /V)                             ³
+³                                                                            ³
+³/Ux987     + 15 minute delay when full (Sub Password turns into a guest     ³
+³           - no delay                   ^for 15 minutes)                    ³
+³                                                                            ³
+³/Ux986     - /V When not full                                               ³
+³           A /V <512                                                        ³
+³           B /V <512 always                                                 ³
+³           + 986 no /V                                                      ³
+³                                                                            ³
+³/Ux985     - No link Email                                                  ³
+³           + Accept Link Email                                              ³
+³                                                                            ³
+³/Ux984     - Kill non BEEP links at 7am                                     ³
+³           + No cutoff (See /RnB)                                           ³
+³                                                                            ³
+³/Ux983     - Ignore logins                                                  ³
+³           B Display logins when unlocked                                   ³
+³           + Display logins always                                          ³
+³                                                                            ³
+³/Ux982     B Accept Link passwords (locked only)                            ³
+³           A (unlocked only)                                                ³
+³           + Accept link passwords Always                                   ³
+³                                                                            ³
+³/Ux981     + Report all /K's at once, and log in /I3                        ³
+³           - Report all /K's only in /I3                                    ³
+³                                                                            ³
+³/Ux980     + /IE sends only the Primary password (usr nnn nnn)              ³
+³           - Secondary sent with Primary (usr nnn nnn ssss)                 ³
+³                                                                            ³
+³/U<SPACE>  Clears last Auto-devalled number display                CON      ³
+³           from sysop status line and from /U list                          ³
+³                                                                            ³
+³/U         Displays ttttt/ddd/lll                                           ³
+³           where t is total call count, d is last devalled                  ³
+³           password number, l is last entered password #                    ³
+³           Note:This can be used to detect hackers                          ³
+³/U=hhxhhx  Lock during the hours of hh and hh                      CON      ³
+³           /U= 9P11P   or /U=11P 3A (11pm/3am)                              ³
+³                                                                            ³
+³/Vn        Validate (give time) to line 'n'                        BABY     ³
+³/Wnn       Set line width                                                   ³
+³/Xn        Squelch line 'n'                                                 ³
+³                                                                            ³
+³/Zdd/mm/yy hh:nn xM ss%mm/yy                                       FULL     ³
+³dd = day : mm = month : yy = year : hh = hour : nn = minute : ss=seconds    ³
+³                                                                            ³
+³           Set Time and Date| /Z03/26/89  6:53 PM 00                        ³
+³           (Note Spacing)     /Z03/26/89 12:01 AM 00                        ³
+³ (Use passwords for Jan 65)   /Z03/26/89  1:09 PM 00%01/65                  ³
+³Diversi-Dial automatically slowkills all online at 12:01 AM on the          ³
+³first day of each new month, whether /Z is set to use one                   ³
+³set of passwords or not.                                                    ³
+³Diversi-Dial also does NOT return a password to it's normal status          ³
+³at the beginning of each month. (A password on alt A will remain on alt A)  ³
+³                                                                            ³
+³/RnZ   Zone user number 'n' Line 'n' can only type one character            ³
+³       per line, and only that line can see what he types & disable commands³
+³/U-981 Don't print /k's                                                     ³
+³/U+981 Print /K's                                                           ³
+³/U-980 /IE sends secondary along with primary password                      ³
+³/U+980 /IE sends only the primary password.                                 ³
+³/I3    /K log                                                               ³
+³/I4    Contains Copyright information, and the addresses for                ³
+³/IB    Scrollback buffer (Remember to prime the channels)                   ³
+³       ordering Ddial, TASC Mods & Extended mods.                           ³
+³/IEnnn Send user number 'nnn' his password in EMAIL.                        ³
+³/IEnnn,MY Month and year (optional)                                         ³
+³/IFnxx Force 'xx' from line 'n'.  Remember to hit escape if                 ³
+³       you don't want the /IF to repeat itself.                             ³
+³       /IF0xxx can be used by the console for a pseudo macro                ³
+³/IO    Toggle Online Mod command access                                     ³
+³/I@$hhhh hh Insert byte 'HH' into location 'HHHH'. Remember the CAPS        ³
+³/II    Turbo screen speed toggle                                            ³
+³/IW    Allow 'n' number to stay forever, as long as 'n' isn't exceeded      ³
+³       Some sysops may want to set this to 0 so a lone non can't            ³
+³       stay forever.  Others may wish to set it to 2 or higher,             ³
+³       so that nons are more likely to stay, so someone is there            ³
+³       when a sub logs on.                                                  ³
+³/IRx   Next Rotating message will be 'x' (Note, 'x' must be in CAPS         ³
+³/I/    Toggle /IF0 access                 -if it is a letter /M )           ³
+³                                 Other Features                             ³
+³                                                                            ³
+³/K will cause the system to display the first line of the /K log            ³
+³   to the whole system.                                                     ³
+³/I+ access will cause an INVERSE flag to appear on the sysop's              ³
+³    status screen, where the channel indicator for that particular          ³
+³    line is located.  This flag will remain, even if the line               ³
+³    flags down.  the only way to get rid of it is to log off or relog.      ³
+³    Think of it as marking your money with a bomb that explodes             ³
+³    ink all over the thief.                                                 ³
+³                                                                            ³
+³                     Quirks in Diversi-Dial & Miscellaneous                 ³
+³                                                                            ³
+³Diversi-Dial has a few quirks that can be taken advantage of.               ³
+³The most useful is in the login sequence...                                 ³
+³The password prompt will accept only numbers for a password,                ³
+³and rejects everything else.  this is useful because you can                ³
+³give out your passwords in the following format:                            ³
+³                                                                            ³
+³                                  /037/673/345                              ³
+³                                                                            ³
+³The "/"(slash) will be ignored at the login and it will                     ³
+³accept a password containing them.  How is this useful? If someone has      ³
+³their password in a macro, and they  accidently  type  it, the  system      ³
+³will think it is a command and will ignore it, so it wont be printed to     ³
+³everyone online.                                                            ³
+³                                                                            ³
+³You may give out a temporary password to someone, without giving them the   ³
+³password,  by  simply  relogging  them  and  typing  /IFn/(password here)   ³
+³The reason there is a '/' in that command is because the user may hit return³
+³when he gets to the password prompt, and your /IF will be printed out to    ³
+³everyone online.. this way you are protected.                               ³
+³                                                                            ³
+³/Hn can be set for anyone who is logging on without a password.  as long as ³
+³it                                                                          ³
+³is set while they are still at the login, it will force them to logon with  ³
+³ the                                                                        ³
+³handle you give them.  Ofcourse /Hn still works on everyone, once they are  ³
+³online.                                                                     ³
+³                                                                            ³
+³Another quirk is in the  password system.  You may set the /Z so that it    ³
+³reads passwords for a year  or  month  that doesn't exist.. for example:    ³
+³/Z07/03/89 12:00 PM 00%05/76   will  set the  system  to  use  passwords    ³
+³from the 5th month of 76. %0C/76  will set  them  for  December  of  76.    ³
+³%0F/0D will cause it to  use  passwords  from  the month 0F and year 0D.    ³
+³/I#nnn,FD will give you the password for user 'nnn' from month F year D.    ³
+³                                                                            ³
+³Another Quirk is in the /K vote system.  When a sub or more 'Votes' to      ³
+³terminate another line, it is reported to the system as line 1 who /K'd the ³
+³other line.                                                                 ³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+

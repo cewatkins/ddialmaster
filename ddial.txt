@@ -1,0 +1,652 @@
+Price: $475 One-time license fee for first 7 phone lines
+        $50 For each additional phone line in the network
+       $100 For each computer connected locally to the network
+            with 0 or 1 phone line connection. (This only will
+            happen in local area network applications)
+
+The license to use Diversi-DIAL applies only to the original
+purchaser, and is NOT transferable.
+
+Initial payment must be by certified check (Sorry, our bad check rate
+has been over 10%). Payment for station expansion must be made
+BEFORE the expanded lines are put into operation. Anyone expanding
+without first paying the $50 per line fee automatically loses the
+license to use Diversi-DIAL. Please don't do this! It leads to major
+problems - Thanks.
+
+MODEM CONFIGURATION:
+
+The HELLO program on the Diversi-DIAL disk contains an option #9 -
+"Modem Configuration". Make a copy of the Diversi-DIAL disk onto
+another disk which is NOT write-protected. Then, choose option
+number 9 and enter the slot and type of modem which you have.
+
+The program is originally set up for no modems in any slot. You can
+run this on any Apple computer without worry. When specifying modem
+slot numbers, be sure you enter the correct configuration, or very
+strange things will happen. If you specify a Hayes modem in slot 6,
+for example, and there is actually a disk controller in slot 6, then
+drive #2 will turn on and destroy the disk in the drive!
+
+Apple II+ and //c computers:
+
+Diversi-DIAL requires an Apple //e as the main station. The clock
+will not keep correct time on any other Apple compatible, but the
+program will run (for demonstration purposes).
+
+Sample version:
+
+The sample version of the program is for demonstration only, and may
+not be used to run a station. The sample version works
+just like the working version, except all PASSWORDs are "nnn 000 000
+0000" regardless of the member number, "nnn" (see below).
+
+The sample disk contains an older version of Diversi-DIAL, without
+the link feature. When you send $475 for the real program, it will
+contain the latest updates, including the link feature. See the
+"Link" documentation for details on how station linking operates.
+
+
+Diversi-DIAL requires a 64K Apple //e with from 1 to 7 Novation Apple
+Cat II, or Hayes Micromodem //e compatible modems. When you decide
+to set up a station, we recommend that you go with the full 7 modems.
+We highly recommend the Micromodem //e compatible from Transend
+Corporation (415 851-3402), which lists for $79. When buying 5 or
+more modems for Diversi-DIAL, they will give you the dealer price
+(talk to Brett Clippard at Transend). If you don’t have a computer,
+you will need to buy an Apple //e (no extras). You should be able to
+get one for about $700. You'll also need a 64K extended 80-column
+card for the Email.
+
+Next, you should call the phone company to install the 7 phone lines.
+Since these lines don't make outgoing calls, be sure to get the most
+basic service (metered service, no touch tone). Also, you will need
+the "hunt" feature, so that if one line is busy, it goes to the next
+line. The easiest way to get connected is to have the phone company
+install 7 modular jacks. The modems come with modular phone cords
+which will plug right in. You can also do your own cabling if you
+wish, to save a little in the installation cost. Our phone company
+charges about $22 a line for installation, and $16.50 a month per
+line.
+
+Loading the program: The program loads through the cassette port.
+This avoids taking up a slot for a disk controller, and avoids the
+cost of a disk drive. It takes about 4 minutes to load the program,
+and you only have to load once, so the cassette port is ideal. The
+HELLO program on the Diversi-DIAL disk contains instructions for
+using the cassette.
+
+If you have another Apple, you can run a cable from the cassette-out
+on it, to the cassette-in on the Diversi-DIAL computer. To get the
+proper output level, you'll have to cut a resistor on the other
+Apple. Just cut one side of the 100 ohm (brown-black-brown) resistor
+R9 on the Apple //e and lift it a little (it’s R18 on an Apple II+,
+check the schematic).
+
+Screen display: The top 2 lines of the screen show the system
+status. In the upper left corner is the cutoff time, i.e. a "3"
+means a 30-minute cutoff. Moving to the right on the top line, the
+numbers 1234567 are caller #'s. Below each number is the channel
+(1-4) where that caller is tuned (* means off line). Next on the top
+line is a number (normally 4) which is the number of minutes callers
+without PASSWORDS get. An inverse "-" next to this indicates
+non-PASSWORD callers are locked out (normally it is blank). The
+top line also contains the times since signon for each caller, 1-7.
+An inverse time means that caller has singed off. An "!" appears to
+the right of the time when that caller is signing on. Then a
+"+","*", or <space> appears depending on the type of PASSWORD he
+enters. Directly to the right of the channel numbers on the 2nd line
+is a status character. This character is a period if you just
+rebooted and preserved old Email and /SM list (see below). When you
+enter /LG from the keyboard, this character becomes an inverse "G".
+Otherwise, it is a blank space. To the right of this character is
+the call counter. This shows the number of calls received since
+midnight (only callers who stay over 2 minutes are counted). The
+number of callers for the previous 24-hour period is displayed to the
+right of the call counter. Finally, the date and time of day is
+displayed at the far right of the 2nd line.
+
+SYSTEM OPERATING FEATURES:
+
+Most features are described in the /I messages. Read through them
+carefully.
+
+The sysop is automatically logged on when he types a message.
+Commands or /P messages do not log on the sysop. The sysop is
+automatically logged off if he doesn't send a message for 8 minutes,
+or if he types /L.
+
+There are no signon/signoff messages on channel 4, for complete
+privacy. Handles of non-PASSWORD holders are not displayed with the
+signoff on channels 2,3,4. Combined with self-squelching, this
+prevents non-PASSWORD holders from disturbing PASSWORD holders on
+channels 2,3,4.
+
+If only one caller is connected to the system, he will not be cut off
+for any reason, so he can wait for someone else to call. The time
+limit cutoff and 4 or 10 unanswered messages cutoff described in the
+/I messages only happen if 2 or more users are connected.
+
+TERMINOLOGY:
+
+There are 2 classes of passwords recognized by the system. The first
+is the numbers entered by all registered members when they sign onto
+the system, and are called PASSWORDS (capital letters). A primary
+PASSWORD consists of a 3 digit member number, and a 6 digit code,
+i.e. 9 digits entered at sign-on. A secondary PASSWORD contains
+these first 9 digits, followed by 4 more digits, i.e. a 13 digit
+number entered at sign-on.
+
+Primary PASSWORD = 3-digit member # + 6-digit code, i.e. 003 405 902
+Secondary PASSWORD = Primary PASSWORD + 4 digits, i.e. 003 405 902 1265
+
+A system password (small letters) is a 6-letter word defined from the
+keyboard by the sysop only. A caller who has already entered the
+full 13 digit primary and secondary PASSWORD at sign-on, can then
+enter this system password to obtain co-sysop powers. Secondary
+(system) password are entered as a list by the sysop from the
+keyboard only. If a secondary password starts with a +, then it may
+be entered by a caller to gain extra time on the system. If it starts
+with a letter or digit, then it may be entered by a caller to allow
+him to leave a message in the /M slot with the same first letter or
+digit as that password.
+
+The 2 password systems evolved separately, and may seem confusing.
+However, this gives the sysop enormous flexibility in controlling the
+system, which is why I left both systems in the program. Please call
+if you have any questions concerning the passwords and PASSWORDS.
+
+SYSTEM COMMANDS:
+
+The sysop's handle appears in the /S list as caller #0. To log the
+sysop off, enter /L (normally linefeeds option except from the
+keyboard). It is best to log off when you're not there so people
+don't try to talk to you. The sysop is automatically logged on by
+typing a message.
+
+The following commands require the system password (P) or can only be
+done from the main keyboard (K).
+
+Master System Password (K): The first thing to do after the boot is
+to set the master system password. This is done by entering /Nxxxxxx
+where xxxxxx is a 6-letter word. Only you will know this word, and
+it is permanent until you reload the program.
+
+System Password (K): Type /Qxxxxxx where xxxxxx is a 6 letter
+password. If you have over 6 letters, the rest are ignored. There
+is only 1 system password allowed at any one time, but it can be
+changed from the keyboard at any time. If you re-enter the master
+system password, then you will get a list of all the secondary
+passwords (see below).
+
+To set the secondary passwords, enter: /Q= <password list>
+
+The password list is a list of secondary passwords separated by
+spaces. There are 3 types of passwords in the list: cutoff
+passwords, co-sysop passwords, and message passwords. All secondary
+passwords must fit in 1 line, about 240 characters, so the number of
+secondary passwords permitted depends on their length.
+
+A cutoff password begins with a "+", and enables a caller who enters
+it to stay connected past the auto cutoff (i.e. longer than 30 min).
+
+A co-sysop password begins with a less than sign, "<". Entering this
+password gives /K, /V and /G power, without giving extra time.
+
+A message password allows the caller to enter system messages.
+System messages are numbered from 0..9 and A..Z. The first letter of
+a message password determines which message the caller with this
+password can leave. If the message password begins with a lowercase
+letter, then this message cannot be sent to the screen automatically
+(see below).
+
+For example, type this from the keyboard: /Q=APPLE alpha +LONG
+
+This sets 3 passwords. If a caller enters /QAPPLE, he can leave
+messages in slot "A". If he types /Qalpha, he can leave
+messages in slot "A" also, but they can't be sent to the
+screen (automatic advertising messages every 5 minutes, see below).
+If he types /Q+LONG then he can stay on past the auto cutoff.
+
+Entering a system password (from outside):
+
+Typq /Qxxxxxx where xxxxxx is the same word that was entered from the
+keyboard. A secondary PASSWORD is required. If the word is
+wrong, the system hangs up. If the word is correct, you will notice
+a "<" in your handle, and you have the password powers.
+
+System Password Powers:
+
+After someone enters a correct system password, he is immune from the
+automatic cutoff. He can also leave system messages (see below), and
+he can hang up on other people who are on the system (see below). He
+can control the PASSWORD system with the /U commands, as well.
+
+Setting the time (K):
+
+To set the date and time, enter /Z01/05/85 11:53 AM 00 and hit
+return, or /Z02/24/85  1:15 PM 00 (note the spaces before the 1). Hit
+return at the exact time you have set. Fill in the correct time
+instead of the times shown, of course.
+
+Auto cutoff (K):
+
+The system will automatically hang up on anyone who stays for more
+than 30 minutes with all lines busy. To change the cutoff, enter
+/Cnx where n is 0..9. A "0" means no cutoff, 1..9 means 10, 20, 30
+etc. minute cutoff. The "x" value is 0..9, which is the number of
+minutes people without PASSWORDS. To disable the PASSWORD
+system, don't enter the "x" value at all.
+
+Rings (P):
+
+Normally, the system picks up on the first ring. To change the
+number of rings, enter /Rxn where x=1..7 (modem slot number) and
+n=1..9 (number of rings). You can't set the number of rings to be
+more than 1, except directly from the keyboard. See the link
+documentation for other /R features.
+
+Hanging up (P):
+
+To hang up on someone, enter /Kn where n=1..7 is the caller #.
+If /U-991 is set, then /Kn also locks the system for 5 minutes
+(see /U-999 below). Enter /KnS to give caller #n the "Cutoff in 30
+sec." message.
+
+Giving extended time (P or K):
+
+Enter /Gn to make caller #n exempt from the cutoff.
+If you enter /LG from the keyboard, then co-sysops can /G.
+If /U-990 is set, /Gn also gives caller #n the power to /K and /V.
+This is useful to pass /K power along. With /U+990, you can /G a
+co-sysop to take away his /K power.
+
+Validating callers with temporary passwords (P):
+
+Enter /Vn to give caller #n a 10-minute cutoff password. If caller #n
+already has a password, you get the "Invalid Caller Number" error.
+
+Entering the Station owner (K):
+
+The station owner's name and address appears at the end of the /I1
+message. To change this, enter /O followed by the message. A
+semi-colon ";" in the message means start a new line. I.E. to enter
+our address, we put /O$10 to:;;DSR Inc.;34880 Bunker Hill;Farmington,
+MI 61111;;
+
+
+
+
+
+Leaving System messages (P) or (message password):
+
+To leave a system message, enter /Mx= (message here), where x=1..9
+A..Z. To start a new line in a message, use a semi-colon ";". There
+are 36 system message spots available.
+
+Note that a person with a message password can only enter messages to
+a single message slot. I.E. if your message password is APPLE, you
+can only enter messages startng with /MA=.
+
+If a system message starts with a semi-colon (converted to carriage
+return), then the message will be automatically sent to channel 1 and
+2 as an advertising message (see auto ads below). One advertising
+message appears every 5 minutes (or set interval with /A) on channel
+1 and 2. You cannot start a message with a semi-colon if you have a
+message password which starts with a lowercase letter (a..z). I.E.
+you can reserve a message space for someone but not allow him to
+enter a message which is displayed as advertising on channel 1 and 2.
+
+Message #0 (i.e. /M0=) appears as a signon message which everyone
+must read.
+
+To chain messages together, end the first message with n\, where "n"
+is the number of messages to chain (0-9), and \ is a backslash. A
+"0\" chains 10 messages.
+
+Note that the "/MZ" message is displayed to people without PASSWORDs
+who try to sign on when the system is locked out (see /U-999 below).
+
+Auto Ads (K):
+
+To turn the automatic ads to channel 1 and 2 on and off, enter /A.
+To change the display interval, enter /Ann where 'nn' is the time in
+minutes between auto ads (nn=01..99).
+
+
+Controlling PASSWORDS (P):
+
+PASSWORDS consist of a 3 digit member number, a 6 digit primary code,
+and an optional 4 digit secondary code. The PASSWORDS are controlled
+with the /U command.
+
+/U-nnn Disables member #nnn (also removes handle from /SM)
+/U+nnn Enables member #nnn
+/UAnnn Changes member #nnn to alternate primary code A (capital A)
+/U     Shows last attempted member #/disabled member # (if any)
+       Also shows number of callers since last reboot.
+/U<space> From keyboard: Clears disabled member display.
+
+Special /U Features (P):
+
+/U= 9P12A Assign automatic start and stop times for /U-999
+/U=10P 1A Another example, A, P means AM or PM - must be uppercase
+          Times appear exactly like time on screen (note spaces)
+/U-999 Locks out non-members completely
+/U+999 Lets non-members on again
+/U-998 Members start self-squelched
+/U+998 Members not self-squelched
+/U-997 Non-member signon messages appear on channel 1 only
+/U+997 Non-member signon messages appear on channel 1,2,3
+/U-996 Non-member 3 min. cutoff when system full.
+/UA996 Non-member 2 min. cutoff when system full.
+/U+996 Non-member normal cutoff (0-9 min.) when full.
+/U-995 Non-member can't send /P
+/U+995 Non-member allowed to send /P
+/U-994 PASSWORDs >=256 are "guest" PASSWORDs
+/U+994 PASSWORDs >=256 are normal PASSWORDs
+/U-993 Members >=100 can't /T2
+/U+993 All members can /T2
+/U-992 Do not need to enter secondary PASSWORD
+/U+992 Members must enter secondary PASSWORD
+/U-991 /K locks system for 5 min.
+/U+991 /K does not lock system
+/U-990 /Gn also gives /K, /V power to caller n
+/U+990 /Gn gives infinite time only
+/U-989 Members can /K non-members - 1 vote minimum
+/UA989 2 vote minimum
+/UB989 3 vote minimum
+/U+989 Members cannot /K
+/U-988 Non-members visible across a link
+/UB988 Guests visible across a link
+/U+988 Only members visible across a link
+/U-987 15 minute call-back delay with /U-992
+/U+987 No call-back delay with /U-992
+/U-986 Auto /V all members when not full
+/UA986 Auto /V all members <512 when not full
+/UB986 Auto /V all members <512 (full or not)
+/U+986 Don't Auto /V
+/U-985 Don't accept remote /E
+/U+985 Accept remote /E
+/U-984 Cutoff Orig Links at 7AM (Except 'beep' links - see /RnB)
+/U+984 Don't cutoff links
+
+15 Minute Call-Back Delay:
+
+If a PASSWORD holder calls back within 15 minutes, he may get a
+"Invalid for 15 min." message. If you bypass the secondary PASSWORD
+system with /U-992, then this call-back delay normally will not
+occur. However, if you still want the call-back delay, even with
+/U-992 set, you may also enter /U-987.
+
+With /U-987 set, members must enter their full 13-digit primary and
+secondary PASSWORD at signon, to avoid the 15 minute call-back delay.
+That is, you have to give out the extra 4 digit secondary PASSWORD to
+people you want to be able to call back immediately.
+
+Note that members only have to enter the last 4 digits once per
+month. A ":" appears in the /SM list for that member, meaning he gets
+an automatic secondary signon (with no call-back delay).
+
+Anyone entering a /Q password (i.e. co-sysops) is immune from the
+call-back delay.
+
+The call-back delay does not occur if the system is empty for 5
+minutes.
+
+Auto /V options:
+
+With /U-986 enabled, guest PASSWORD holders will receive an automatic
+/V when they signon, if the system has not been full for 5 minutes.
+This is the same as if the sysop entered /Vn (see /V instructions).
+
+The /UA option does the same thing, but only for guest member
+numbers less than 512.
+
+The /UB986 option gives auto /V to members <512, even if the system
+is full. Interestingly, this will /V members #000 to #255 who get
+the call-back delay.
+
+For example, if you use /U-992 and /UB986, you can then give out 3
+types of PASSWORD: Full mambers #000 to #255 for $10 / Paid guests
+#256 to #511 for $5 / and unpaid guests #512 to #900.
+
+Vote /K Options:
+
+With /U-989 set, members can "Kill" non-members. This may be used to
+give paying members some control over non-members when the system is
+not locked.
+
+To be eligible to vote, the "Killer" must be a member with a cutoff
+time of 20 minutes or more. That is, people you /V are not eligible
+to vote. The "Victim" must be a non member, i.e. someone who did not
+enter a valid PASSWORD. People with guest PASSWORDS cannot be
+victims.
+
+The /Kn command enters a vote to "Kill" caller #n. Before the victim
+is disconnected, all eligible killers must vote against him. That
+is, the vote must be unanimous. With /U-989, at least 1 member must
+enter /Kn. With /UA989 you need at least 2 members, and with /UB989
+you need at least 3 members to disconnect the victim.
+
+A member can have only 1 "Kill" vote active at a time. That is, if
+he types /K1 and then /K2, the vote against caller #1 is removed.
+
+
+With /U-999 in effect, everyone MUST enter a valid PASSWORD to be
+connected to the system. If a caller does not enter a valid
+PASSWORD, then he will first see the /MZ" message, then the last
+part of the /I1 message. You should put instructions in /MZ and /O
+telling non-members how to order the regular and "guest" PASSWORDs.
+
+When you enter /U-994, all PASSWORDs greater than or equal to 256 are
+treated as "guest" PASSWORDs. This is the same as not entering a
+PASSWORD, except that a "guest" PASSWORD allows the caller to signon
+to the system with /U-999 in effect. I recommend selling these
+PASSWORDs for $0, $1 or $2 and keeping the system locked out during
+prime hours. This will allow you to eliminate nuisance callers, but
+still register enough people to make it interesting.
+
+Handles for the first 256 members are stored in the /SM list, and
+entered automatically when the member signs on (see /I3 and /I6). To
+remove a handle from the list, type /U-nnn, i.e. disable that
+member's password. To make the member number appear again in the
+list (with no handle), type /U-nnn a second time, if you wish. You
+can then type /U+nnn to re-enable his PASSWORD.
+
+The sysop should use member #000. This member number is
+automatically given a secondary PASSWORD by the system without
+entering the last 4 digits.
+
+PASSWORDS change automatically every month. PASSWORDS for different
+stations are always different.
+
+Printing a list of PASSWORDS:
+
+Boot the Diversi-DIAL disk and choose menu option #6 - Print
+PASSWORDS. Be sure your printer is online and in slot #1. Enter the
+last digit of the year when prompted, i.e. 5 for 1985. The
+printer will begin printing a list of PASSWORDS. At the left of each
+group of numbers is the 3-digit member number. Next is a 2-digit
+number showing the month and year, i.e. 15 for January, 1985 or C5
+for December, 1985. Then comes the 6-digit primary code for that
+month, followed by the 4-digit secondary code. Next, the alternate
+"A" code and "B" code are listed. For example:
+
+024 15-605 125 0122 A-404 423 B-209 183
+    25-509 023 1224 A-104 445 B-100 023
+
+In January, 1985, member #024 should enter the following numbers at
+signon: 024 605 125. If this PASSWORD is revealed, then the sysop
+could enter /UA024. Then member #024 would enter this for January,
+1985 at signon: 024 404 423. In February, 1985, the PASSWORD changes
+automatically to: 024 509 023.
+
+The 4-digit secondary is optional. If you enter /U-992, then it is
+never needed. The secondary code does not change for the A and B
+alternates. Only member numbers <256 may enter secondary codes, or
+receive secondary PASSWORDS.
+
+The system protects itself against unauthorized codes getting out.
+If 2 people ever sign onto a system with the same PASSWORD, this
+PASSWORD is immediately disabled, and alternate A is enabled. The
+member number which is disabled is displayed on the screen to the
+left of the date on line 2. You should keep a list of all disabled
+member numbers. If you ever have to reboot, use /U to disable these
+member numbers again.
+
+Email Operation:
+
+The use of Email is described in /I4. The sysop is always member
+#000, and can send or read Email for #000 from the keyboard or
+remotely. Email requires a 64K card in the Auxiliary slot on the
+Apple //e. Future Email versions may require the Ramworks //e card
+from Applied Engineering for more Email space. Buy this card with
+only 64K now, and you can add 256K to it later for about $85.
+
+There is 48K of Email space. Messages are stored in the Email
+space until they are read, and then the space is reclaimed. If the
+Space fills up, the oldest unread message is lost, when someone types
+in a new message.
+
+In practice, deleting old messages and reclaiming the email space
+keeps email from filling up, and insures everyone gets their
+messages. The only way email will be lost is if someone sabotages
+it on purpose by sending a lot of junk email. In 1 week, we have
+only used 2K of our 48K email space. You can see where your email
+pointer is by typing /E?, which will show a hexadecimal number
+between $0200 and $B800, where $0200 means no unread email is
+present, and $B800 would mean the system is full of unread email.
+
+There is no limit to the amount of Email a member can send. If
+someone sabotages the Email by sending junk messages, you can
+discover and delete these messages with the /E#nnn and /E*nnn
+commands (see summary below).
+
+Note: Enter /E*999 before you do /E? or /E#. The /E*999 forces
+"garbage collection", which removes messages which have already been
+read. "Garbage collection" occurs automatically once an hour.
+
+The /E? command also shows the month when the oldest Email message
+was sent. The command, /E#% will count, and /E*% will delete all the
+old email from this month. These commands do not work if the oldest
+message was sent in the current month, since this would delete ALL
+Email.
+
+Secondary PASSWORDS:
+
+Sending Email requires a secondary PASSWORD, while anyone with a
+primary PASSWORD can receive Email. Secondary PASSWORDS are sold
+through SYSOPS, and consist of an additional 4 digits at the end of
+the primary PASSWORD. When a member enters his secondary PASSWORD
+once, the system remembers it until the end of the month (or the next
+reboot). He then only needs to enter the primary PASSWORD for the
+rest of the month. To enter a secondary PASSWORD, you must have a
+member number <256.
+
+You can bypass the secondary PASSWORD requirement, by entering /U-992.
+
+THIS IS VERY IMPORTANT!!!! READ CAREFULLY!!!
+
+Boot process:
+
+Turn on computer and enter:
+
+CALL -151    Enters monitor with "*" prompt.
+1800.9C00R   Start cassette and listen for starting tone.
+             Then hit <return> and wait until * appears.
+             If it says "ERR", try again with a different
+             Tape player volume setting.
+2000G        Starts program
+
+Hit <return> when it asks for PASSWORD
+/Nxxxxxx     Enter master password
+/Qxxxxxx     Enter system password
+/Zxx/xx/xx etc. Enter date and time (use same format as on screen)
+/O$10 to;;etc.  Enter owner message
+
+       SUMMARY
+
+System Commands (keyboard only):
+
+/Ann    Auto ads on/off
+/Cnx    Set cutoff times
+/Gn     Give extended time
+/L      Logoff sysop / co-sysop cannot /G
+/LG     Logoff sysop / co-sysop can /G
+/Nxxxxxx Enter master system password
+/O      Enter owner message in /I1
+/Qxxxxxx Enter system password
+/Q=     Enter password list
+/E*nnn  Delete ALL unread messages sent by member #nnn
+/E*%    Delete all old Email sent last month
+/J#/x   Set auto-dial phone number (see link instructions)
+
+
+System Commands (keyboard or remote with system password)
+
+/Z      Set date and time
+/Kn     Hang up caller #n
+/Vn     Validate caller #n for 10 min. cutoff
+/Gn     (if /LG entered from keyboard)
+/Mn=    Enter message #n
+/Rxn    Set number of rings before pickup phone (n<=1 remote)
+        See link instructions for other /R commands
+/U      Control PASSWORDS
+/E?     Show Hexadecimal pointer to end of Email space in use.
+        Also shows month sent of oldest Email message.
+/E#nnn  Count number of unread messages sent by member #nnn
+/E#%    Count old Email sent last month
+
+Automatic Initial Data Entry:
+
+Option #8 in the Diversi-DIAL HELLO program menu is "Enter Startup
+Lines". When Diversi-DIAL first starts up, it reads through these
+startup lines, just like they had been typed from the keyboard.
+
+You can enter a maximum of 2,816 characters in up to 100 startup
+lines. The startup lines are useful for entering the /U's that you
+want to use on your station, as well as the /C, /N, etc.
+
+If you have an internally linked station, you can enter /R7A as a
+start-up line. However, it takes about 3 seconds to actually get the
+link established. If you enter a tilde after the /R7A command, the
+start-up routine will pause until the /R7A is complete:
+
+/R7A
+~
+/H7Link      (this wouldn't work without the ~ above)
+
+
+System Crashes:
+
+The Diversi-DIAL software has proven totally reliable, running for
+many months at a time without crashing. If the system crashes, it is
+usually due to a power interruption, or hardware error.
+
+Diversi-DIAL now contains a "Glitch Detector". If an auxiliary RAM
+bank-switch error occurs, a flashing "G" will appear on the screen.
+If this occurs, this means the system is prone to crashing during
+Email operations.
+
+If the system does crash, you may see a changing character in the
+upper right corner of the screen (also happens when you press reset
+on an Apple II+). If you see this, press reset again (with a disk
+drive, press reset a 2nd time). Debugging info is as follows:
+
+1000-10FF      0 PAGE
+1100           P
+1101,1102      PROGRAM COUNTER
+1103-11FF      REST OF STACK
+1200           A
+1201           X
+1202           Y
+1203           S
+
+For more information, write to DSR with specific questions, or call
+Bill Basham (the author) at 313-553-9460 between 3 and 5 PM EASTERN
+time on weekdays. For a list of other Diversi-DIAL stations, call
+our station #1 at 313-553-4373 and enter /M5.
+
+GOOD LUCK!
+

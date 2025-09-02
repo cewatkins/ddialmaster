@@ -1,57 +1,44 @@
-# Divers-Dial Master
+# Diversi-DIAL Master
 
-A vintage 6502 assembly telecommunications system for multi-channel dial-up communications.
+A vintage Apple //e telecommunications system for multi-line BBS operations.
 
 ## Overview
 
-Divers-Dial Master is a sophisticated telecommunications program written for the 6502 microprocessor, likely developed in the 1980s for BBS (Bulletin Board System) or modem pool operations. The system supports multi-channel communication handling with up to 8 simultaneous connections.
+Diversi-DIAL Master is a sophisticated multi-line BBS (Bulletin Board System) program written for the Apple //e computer, developed by Diversified Software Research in 1985. This system supports up to 7 simultaneous dial-up connections plus a console operator, creating an 8-channel telecommunications hub. The system was commercially licensed for $475 for the first 7 lines, with additional lines costing $50 each.
 
 ## Features
 
-- **Multi-Channel Support**: Handles up to 8 simultaneous communication channels (0-7)
-- **UART Interface**: Serial communication through UART registers at $9001
-- **Command Processing**: Comprehensive command parser with single-letter commands
-- **Screen Management**: Display handling with screen memory at $0400-$04xx
-- **Buffer Management**: Sophisticated input/output buffering system
-- **Memory Management**: Dynamic memory allocation and pointer management
-- **System Configuration**: Configurable system parameters and channel settings
+- **Multi-Line BBS System**: Supports up to 7 simultaneous dial-up connections plus console
+- **Real-Time Chat**: Multi-channel chat system with channels 1-4
+- **Email System**: Built-in email with user accounts and message management
+- **Password System**: Dual-tier password system (Primary/Secondary PASSWORDs + system passwords)
+- **Station Linking**: Link multiple Diversi-DIAL stations across phone lines or direct connections
+- **Modem Support**: Compatible with Novation Apple Cat II and Hayes Micromodem //e
+- **System Management**: Comprehensive sysop controls and user management
+- **Call Tracking**: Automatic call counting and time management
+- **Private Messaging**: User-to-user private messaging system
+- **System Messages**: Rotating announcement system
 
-## System Architecture
+## Hardware Requirements
 
-### Memory Map
-- `$0400-$04xx`: Screen/display memory
-- `$0100-$01xx`: Stack page (cleared during initialization)
-- `$1800-$xxxx`: Main program code
-- `$1A00-$xxxx`: String/message data storage
-- `$7Fxx-$7Fxx`: System status tables and buffers
-- `$9001`: UART data/status register
-- `$xxD0-$xxF3`: Data copying range during initialization
+### Minimum System Requirements
+- **Computer**: Apple //e (64K required)
+- **Memory**: 64K RAM + 80-column card for email functionality
+- **Modems**: 1-7 Novation Apple Cat II or Hayes Micromodem //e compatible
+- **Phone Lines**: 1-7 dedicated phone lines with "hunt" feature
+- **Loading**: Cassette port for program loading (no disk drive required)
 
-### Core Components
+### Recommended Configuration
+- **Full 7-modem setup** for maximum capacity
+- **Zoom ZM-300 modems** (compatible, ~$75 each circa 1985)
+- **Basic phone service** (metered, no touch-tone required)
+- **Modular phone jacks** for easy modem connection
 
-1. **Initialization System** (`$1800-$195B`)
-   - Stack pointer setup
-   - Memory clearing and configuration
-   - Channel initialization
-   - Screen setup
-   - System parameter loading
-
-2. **Communication Handler** (`$1853-$1897`)
-   - Serial I/O processing
-   - UART interface management
-   - Data transmission/reception
-   - Channel status monitoring
-
-3. **Main Program Loop** (`$28B4-$2Axx`)
-   - Input processing
-   - Command dispatching
-   - System state management
-   - Buffer handling
-
-4. **Command Processor** (`$224A-$23xx`)
-   - Command parsing and validation
-   - Channel-specific operations
-   - System control functions
+### Network Expansion
+- **Station Linking**: Connect multiple Diversi-DIAL systems
+- **PC Pursuit Support**: Long-distance linking via Telenet
+- **Internal Links**: Direct computer-to-computer via parallel cards
+- **Interface Two Cards**: $39.95 each for direct linking (MicroDimensions)
 
 ## Command Structure
 
@@ -94,13 +81,51 @@ Where:
 - **Display**: Text-mode screen interface
 - **Commands**: 10 primary command types
 
+## Documentation
+
+This repository includes comprehensive documentation:
+
+### Core Files
+- **[dialmstr.txt](dialmstr.txt)** - Complete 6502 disassembly with detailed comments
+- **[FLOWCHART.txt](FLOWCHART.txt)** - ASCII flowchart of program control flow
+
+### User Documentation
+- **[USER_GUIDE.md](USER_GUIDE.md)** - Complete guide for end users
+- **[COMMANDS.md](COMMANDS.md)** - Comprehensive command reference
+
+### System Administration  
+- **[SYSOP.md](SYSOP.md)** - System operator guide and procedures
+- **[HARDWARE.md](HARDWARE.md)** - Hardware setup and configuration guide
+
+### Technical Documentation
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - Technical architecture and design
+- **[LICENSE.md](LICENSE.md)** - Legal and licensing information
+
+### Original Documentation (Historical)
+- **[DIALINST.txt](DIALINST.txt)** - Original installation instructions
+- **[ddial.txt](ddial.txt)** - Main user manual  
+- **[extended.txt](extended.txt)** - Extended features guide
+- **[link.txt](link.txt)** - Station linking instructions
+- **[update.txt](update.txt)** - Software update information
+
 ## File Structure
 
 ```
 ddialmaster/
-├── README.md           # This file
+├── README.md           # Project overview and quick start
 ├── dialmstr.txt        # Complete 6502 disassembly with comments
-└── docs/              # Additional documentation (if available)
+├── FLOWCHART.txt       # ASCII flowchart of program control flow
+├── USER_GUIDE.md       # End user documentation
+├── COMMANDS.md         # Command reference guide
+├── SYSOP.md           # System operator guide
+├── HARDWARE.md        # Hardware setup guide
+├── ARCHITECTURE.md    # Technical architecture documentation
+├── LICENSE.md         # Legal and licensing information
+├── DIALINST.txt       # Original installation instructions
+├── ddial.txt          # Original user manual
+├── extended.txt       # Original extended features guide
+├── link.txt           # Original linking instructions
+└── update.txt         # Original update information
 ```
 
 ## Installation and Usage

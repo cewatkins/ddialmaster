@@ -1,0 +1,248 @@
+Before using this modification disk, you must first make a copy of
+DIAL onto it. Make sure that you have already configured DIAL to
+operate with your system (modem configuration, /I1, start-up lines,
+etc.). A copy option (6) is provided in the disk menu. Once you
+have used it, the execute (1) and cassette (2) functions will then
+perform similar to the same functions on the original DIAL diskette
+except that the program will now be loaded already modified.
+
+The following documentation explains each feature now available
+through the current modification package. A dash (-) following a
+title denotes a miscellaneous command which any caller may use. An
+(S) denotes a command which requires the System (/Q) password to
+be installed while an (M) denotes a command which requires the Master
+(/N) password to be installed.
+
+
+Call Waiting(tm) Saver (-): /CW
+
+This command will allow you to drop carrier for up to 2 minutes
+without being disconnected. When a Call Waiting interrupt is
+detected, activate the saver and attend to the incoming call. If a
+connection is not established before the allotted time expires,
+the system hangs up.
+
+To protect PASSWORD holders from accidental devalidation, the
+system will not cancel an account which is simultaneously used by
+two callers as long as the original caller has /CW activated.
+Instead, the first caller will immediately be logged off and the
+second will be connected normally.
+
+
+Instruction Slots (-): /I
+
+Typing /I gives a list of instruction slots along with some
+miscellaneous commands. The PASSWORD slot (/I1) remains unchanged.
+The channel capacity table (originally /I3) and the copyright
+notice (originally /I9) are now combined to form /I2. To provide
+sufficient memory for these modifications, the remainder of the
+/I slots have been erased.
+
+
+Alternate Station List (-): /S#
+
+This command produces a condensed version of the local station
+list (/S). You will see two lines of numbers divided roughly into
+seven columns and a third line containing the time and date. Each
+column represents one caller. The first line displays the time of
+connection for each caller next to their PASSWORD indicator ("*",
+"$", or " "). The second line shows the respective account number
+for each caller.
+
+For example, a local station list (/S) which looks like:
+
+#1(T1:?) 001
+#2<T2:Janet) 020/#017*
+#3[T2:Mike) 004
+#4[T1:Larry) 035/#256$
+#5(T1:?) 001
+#7<T1:Brad) 005/#001*
+--> 04/05/87 12:00 PM
+
+would appear as:
+
+001 020*004 035$001     005*
+    017     256         001
+--> 04/05/87 12:00 PM
+
+
+Entering Master Password (-): /I+<master>
+
+Entering the Master (/N) password gives the caller full sysop
+powers. If an incorrect password is entered, the user is immediately
+disconnected. There is no change in the caller status ("<", "[",
+or "(") preceding the user's handle. To remove the master password,
+type /I-. This is useful for sysops who have people other than
+themselves using the slot #0 keyboard to prevent others from
+seeing PASSWORDs, etc.
+
+
+Beep Keyboard Terminal (S): /CB
+
+Type /CB to produce a beep at slot #0, even if beeps are turned off
+(/B). The duration of this noise is twice that of the standard bell
+(Ctrl-G) so that the two can easily be distinguished.
+
+
+Dual Channel Links (S): /RnD
+
+Type /RnD to convert a normal link at slot #n into a Dual Channel
+Link. Both ends of the link must be converted if the two channels
+are to be properly linked. Note that the link status character
+changes to a "-".
+
+Dual Channel Links effectively transmit and receive two separate
+channels, the primary link channel and the secondary link channel.
+The primary is always the channel on which the link itself resides
+and is on the /S, while the secondary can easily be determined
+from the primary. Together they form the channel pair for that link.
+
+Primary Channel:   1  2  3  4
+Secondary Channel: 2  1  4  3
+
+The secondary channel does not affect standard link features such
+as internal or external link Email and /P messages. To prevent
+confusion concerning the secondary channel, link station lists
+(/SP) and logins now contain the channel number of the caller.
+Because normal links may still appear, the "#" or "/" method of
+primary channel identification might be needed. These should be
+ignored if you are on the secondary channel since they will always
+appear as "/".
+
+
+Toggle /K Immunity (S): /RnK
+
+To prevent internal links from accidentally being disconnected, a
+feature was installed into the program which would allow only slot
+#0 to /K a parallel card whether the Master or System password is
+entered or not. Callers using the System (/Q) password, however, can
+disable the /K immunity with /RnK then /Kn. Type /RnK to protect
+any slot #n from unwanted removal and again to reverse it. Because
+all slots are defaulted to being without protection, if you actually
+want your parallel cards to be protected, you will have to use the
+immunity command as if they are normal lines.
+
+
+Private Chat (S): /RnP
+
+This feature enables two callers to enter private chat mode. This
+chat mode is similar to terminal mode (/RnT) in that two callers
+appear as if they were directly connected. Unlike terminal mode,
+the target slot may either contain a link or normal caller. Since
+the same basic routines are used for both, private chat includes
+all features normally supported by terminal mode (/RnT).
+
+
+Controlling Login Messages (S): /Ux983
+
+When a caller is first connecting, public login messages appear
+on channels 1, 2, and 3. To turn the messages off completely,
+type /U-983. Because the message appears anytime an incoming call
+is detected, messages will appear even when the system is locked.
+If these messages become annoying, typing /UB983 will prevent them
+from showing up unless the system is unlocked. To re-enable the
+login messages, type /U+983. The link command /CS also filters
+login messages.
+
+
+Display PASSWORD (M): /I#nnn and /I#nnn%mm/yy
+
+Typing /I#nnn will display the PASSWORD which is currently active
+for the desired account #nnn. Both the primary and the secondary
+PASSWORDs will be displayed along with the status of that account
+("+", "A", "B", or "-"). This works with both permanent (/Z..%mm/yy)
+as well as monthly PASSWORD systems. To display a PASSWORD for any
+other month and year, enter /I#nnn%mm/yy.
+
+
+Force Keyboard Terminal (M): /I/<command>
+
+This forces a command string into the keyboard buffer, terminating
+any line being entered from slot #0 at that time. This is helpful
+for setting up the system from a remote computer or for executing
+keyboard-only commands from remote slots.
+
+
+Enter Login Message (M): /I;<message>
+
+With this feature you can enter a new login message after the program
+is up and running. Like the message slots, using a ";" will start
+a new line. Only the first 85 characters are accepted, and the ";"
+used to identify this command is also used as part of the message.
+A beep will automatically be included at the end of the login
+message, but no return will be added.
+
+
+Set Call Counters (M): /ICxxxxx and /IDxxx
+
+This command allows a sysop to set the call counters seen when users
+log into the system. /ICxxxxx sets the total number of calls since
+the last reboot. /IDxxx sets the number of calls since midnight.
+These commands are especially uesful for preserving the counters
+during a reboot or for accumulating the counters in multiple-computer
+stations.
+
+
+Set Locked System Message (M): /IMx
+
+To set the locked system message, enter /IMx where x is the message
+slot #(1..9, A..Z). This permits for a selection of locked system
+messages. Note that any slot except /M0 may be chosen and that the
+ending of the PASSWORD (/I1) slot will still appear at the end.
+
+
+Entering Passwords (M): /IQ(System), /IQ=(Secondary Passwords),
+                        /IQ(Master), and /IN(Master)
+
+These commands function in exactly the same manner as if they were
+entered from the keyboard except that they can be executed by any
+user with the Master (/N) password entered.
+
+
+Station List Interval (M): /ISnn
+
+Link station lists (/SP) are normally generated every 5 minutes.
+This command changes the interval between link station lists to
+any 2 digit number between 1 and 99.
+
+
+Diversi-DIAL Modification Command Summary
+
+Miscellaneous Commands:
+
+/CW             Activate Call Waiting Saver
+/I              Display Instruction Menu
+/I1             Display PASSWORD Information
+/I2             Display Channel and Copyright Information
+/I+<master>     Acquire Master Password Access
+/S#             Display Alternate Local Station List (/S)
+
+Commands Requiring System Password:
+
+/CB             Produce Beep (Ctrl-G) from Slot #0
+/RnD            Activate Dual Channel Link
+/RnK            Toggle Hang Up (/K) Immunity
+/RnP            Activate Terminal Mode (/RnT) for Callers
+/U-983          Ignore Login Attempts
+/UB983          Display Login Attempts (unlocked only)
+/U+983          Display Login Attempts (locked or unlocked)
+
+Commands Requiring Master Password:
+
+/I#nnn          Display Current PASSWORD #nnn
+/I#nnn%mm/yy    Display (mm/yy) PASSWORD #nnn
+/I-             Remove Master Password Access
+/I/<command>    Enter Command Through Slot #0
+/I;<message>    Enter Login Message
+/ICxxxxx        Set Total Call Counter
+/IDxxx          Set Daily Call Counter
+/IMn            Set Locked System Message Slot (/M)
+/IN<master>     Enter Master (/N) Password
+/IQ<system>     Enter System (/Q) Password
+/IQ=<passwords> Enter Secondary (/Q=) Passwords
+/IQ<master>     Display Secondary Passwords
+/ISnn           Set Link Station List (/SP) Interval
+
+Diversi-DIAL trademark of Diversified Software Research, Inc.
+Call Waiting trademark of American Telephone and Telegraph Company
+--------------------------------------------------------------------------------

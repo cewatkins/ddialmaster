@@ -1,0 +1,600 @@
+The Link System:
+
+To link Diversi-DIAL stations together, you will use one of your
+phone lines to call the other station. Everything said on one
+station will be transmitted to the other station over this phone
+line. You can then use a 2nd line to link to yet another station,
+and so on. Each station can link to as many stations as you want,
+creating enormous linked networks.
+
+There is no limit to the number of stations that can be linked. The
+only restriction is that you must never create a circular link.
+Let's say station "A" links to "B" and "B" links to "C". If "C" then
+links back to "A", this is a circular link. Messages would go around
+this link forever, completely clogging the lines. Other than this
+restriction, you can link to any other Diversi-DIAL you want.
+You cannot cause a circular link unless you link to 2 stations at
+once, so just be careful when doing this.
+
+CONNECTING THE LINK:
+
+To connect a link, you must dial out with one of your lines.
+Diversi-DIAL contains an automatic phone dialer option, to make this
+easier. To get Diversi-DIAL to dial a phone number, you must first
+enter the number you want to dial from the keyboard with the /J
+command, followed up to 11 digits you want to dial. You may also
+enter an 8th optional digit (1..7) specifying the maximum modem
+number allowed to dial. For example, to dial the number 553-9460,
+you would first enter:
+
+/J5539460
+
+Note, no spaces. To cancel dialing, just enter /J. To only allow
+dialing on modem #1 or #2, you would enter:
+
+/J5539460/2
+
+Special note: To allow only 7-digit /J:
+
+  BLOAD DIAL
+  POKE 32475, 0
+  BSAVE DIAL
+
+To actually do the dialing you enter:
+
+/R1T            (for line 2, it's /R2T, etc.)
+
+This will first pick up the phone, wait 2 seconds, and dial the
+number. At this point, Diversi-DIAL will become a terminal, for
+the sysop only. You should see the signon message for the other
+station, and the normal Diversi-DIAL messages on your own station
+will stop. If the signon message does not appear, the line is
+probably busy.
+
+Now, you must get the other station to recognize that you are a link,
+and not a regular caller. The easiest way is to enter a PASSWORD
+which starts with an even number, 900 or greater. You'll have to get
+that from the sysop of the other staion. Otherwise, the sysop of
+the other station can turn you into a link with:
+
+/R1A            (or /R2A, etc.)
+
+Note that this command results in a signoff, and then signon of the
+link station, but the connection is not actually broken.
+
+Once you get into link mode on the other station, just hit ctrl-G to
+exit from terminal mode. The normal Diversi-DIAL chat will
+re-appear, and the stations will be linked.
+
+PC PURSUIT:
+
+PC Pursuit is by far the best way to connect long-distance, since
+they charge a flat fee of $25 a month, no matter how long you are
+connected. This makes linking Diversi-DIALs around the country
+possible. Otherwise, the phone bills would be prohibitive.
+
+PC Pursuit can only call 14 major cities, at present. Fortunately,
+Detroit is one of them. You can call FROM almost anywhere, but you
+are only able to call TO numbers in the major cities.
+
+To sign up for PC Pursuit, call 800-368-4215 on weekdays voice, or
+they have a BBS at 800-835-3001.
+
+As of now, you can use PC Pursuit to connect two stations together
+without going through a major city. It's a little tricky, but here's
+the idea.
+
+You get the other sysop to call his local Telenet node (they give you
+a list of nodes when you get PC Pursuit). Tell him to hit <return>
+twice, and keep entering "D" to hold the line. When he signs on, he
+will see a Telenet node number as the first thing. You have to get
+this number from him, so you may need another phone line to talk
+voice at the same time. Let's say he saw "512 14F" when he signed on
+to his Telenet node.
+
+Now, you call your Telenet node and enter the following:
+
+@C 512 14F,id,password   (your PC Pursuit ID and password)
+
+The 512 14F is the number he gives you. You should now be able to
+see what he types, and vice versa. This is great for a private chat
+with anyone in the country. For a Diversi-DIAL link, however, both
+sides will need to enter the following commands.
+
+<return>@<return>
+@INSE NONE
+@HALF
+@SET? 10:0
+@CONT
+
+Note that you won't see your typing after you enter HALF. Now, just
+hit ctrl-G to connect the links on Diversi-DIAL. You can use this
+method to connect any two stations which have a local Telenet node.
+
+LINKED STATIONS IN ACTION:
+
+Now that you're linked, here's how it works.
+
+Everything someone types on a remote station gets sent to your
+station as well. You will see the full handle of the person on the
+remote station, but with a number in front of it. This is the number
+of the link line. It might look something like this.
+
+1#2[T1:Joe) HI, I'm on a remote station now.
+#0<T2:Bill) Hi, Joe, welcome to linkland.
+
+Now, for Bill to send a private message to Joe, he would type:
+
+/P12 Hey Joe, only you can see this.
+
+If Joe's handle looked like this:
+
+3#2[T1:Joe) HI, I'm on a remote station now.
+
+Then Bill would type:
+
+/p32 Hey Joe, this is private.
+
+That is, you add the number before the handle to the /P. You can
+think of the people on the remote station as callers #30 to #37.
+Now, if Joe's station is also linked to yet another station, then the
+people on the other station would have 2 digits in front of their
+handles. You might see this:
+
+35#7[T2:Harry) Hey, I'm 2 stations away from you Bill.
+
+For Bill to send a private message to Harry, he would type:
+
+/P357 Hey Harry, here's a private message for you.
+
+No matter how many digits are in front of the handle, you just add
+them to the /P to send a private to that person.
+
+If the link channel gets too confusing for you, you can tune to a
+different channel and still send /P messages to people on the
+remote stations. This way you won't see all the public "garbage"
+everyone is sending, and you can have a private chat with anyone on
+the network.
+
+When the program starts, the /ML space contains link instructions.
+You may replace them if you wish. Please read /ML for more details
+on links (call D-DIAL #1 at 553-4373 if you have the demo).
+
+OTHER LINK CONTROLS:
+
+There can be an awful lot of data going through the links, with so
+many people typing at once. I've included a number of features to
+reduce the confusion.
+
+First of all, nobody without a PASSWORD is seen by the remote
+stations. I call this the "Twit Filter". You can /V a "Twit", and he
+will then get through the filter and go to remotes. If a caller has
+a handle beginning with a "[", then he can be seen by the remotes.
+
+You allow "twits" to cross a link with /U-988 (see /U info).
+
+If the link channel gets too busy, you can turn it into a "Quiet"
+channel (see /I3). The sysop tunes to the channel and enters:
+
+/R9M
+
+From then on, no public messages will be seen on this channel, except
+messages typed by sysops, and the /SP station lists (see below).
+Everyone can still /P to get messages to specific individuals. This
+allows large links to be manageable.
+
+Moving the remotes to different channels:
+
+Sysops can move a remote with /T. If the remote is on line 7,
+and you want to move him to channel 4, enter:
+
+/T47
+
+You then have to type /T4 yourself to follow him.
+
+THE /SP LISTS:
+
+Every 5 minutes during a link, each station sends an abbreviated form
+of its /S list to the entire network. This way, people on remote
+stations can tell who is on the other stations which are linked.
+
+A sysop can request /SP lists at any time. To send your own /SP
+list, just type /SP. To request a /SP from a linked station, enter:
+
+/Pn/SP (n can be more than 1 digit)
+
+/SP never does anything unless there is a remote station on your
+channel.
+
+The /SP list shows only the people with PASSWORDS (it skips the
+"Twits"). If you see someone in the /SP list, this means you can send
+a /P message, and he should receive it. If you type a public
+message, he will only get it if he's on the same channel as the link.
+
+If you get tired of watching all the /SP messages go by, enter:
+
+/CS or /CL or /CM
+
+This means you will not see them, until you enter /CS again. See /ML
+in the program for further details.
+
+STATION PRIVATES:
+
+If you send a /P to a remote station, but don't end it with a caller
+number on that station, it will go to everyone on that station only.
+This is called a "Station Private". Station Private messages all
+start with "S", and individual Private messages start with "P". If
+#1 is a link, for example, /P1 would be seen only by people on the
+linked station, and not by people on your own station.
+
+To send a station private to your own station, type /PS and the
+message. This type of message is not seen by any remote stations.
+Try to get into the habit of using /PS for talking with people on
+your station, to avoid confusing the remote people.
+
+
+
+
+INTERNAL LINKS:
+
+If you want to expand your own station to more than 7 lines, you can
+link 2 or more computers together with a cable. This direct link
+behaves very much like a remote link.
+
+To make a direct link, you will need to buy 2 parallel cards, and a
+cable to connect them. I found a terrific card, made by an excellent
+company at a great price. It is ideal for this purpose. The cards
+cost $39.95 each, and they will include a connecting cable when you
+buy 2 cards. Order your cards from: MicroDimensions, Inc.,
+1-800-423-7252. Tell them it's for Diversi-DIAL, and you want 2
+"Interface Two" cards, with a connecting cable.
+
+Each card has two 16-pin DIP sockets labeled "A" and "B". You'll
+notice the Diversi-DIAL modem configuration program now includes
+"Interface Two A" and "Interface Two B". To link 2 computers
+together, use the "A" type, and connect the "A" sockets on each card
+together with the cable they send you. Just make sure you plug the
+cable in the same way on both cards. That is, the same side of the
+cable should be up on both cards.
+
+Now, plug one card into slot #7 of each computer. Get the
+Diversi-DIAL software running on both computers. The enter:
+
+/R7A
+
+Enter this on both computers. They will both then connect as a link,
+just as if someone had linked by a modem. You can disconnect the
+link at any time from either end, with /K7, and re-connect it again
+with /R7A.
+
+When you want to add a 3rd computer, you just need 1 more card and
+cable. You will now connect the "B" socket on your main computer,
+with the "A" socket on the new card. Plug the new card into slot #7
+of the third computer. You now have to configure the main computer
+to show a "B" type Interface Two card in slot #6! Note thet even
+though the card is physically in slot #7, the "B" side of the card is
+considered to be in slot #6. On the main computer, you connect the
+"A" side with /R7A, and the "B" side with /R6A. The "B" side
+operates as another remote link on line #6.
+
+Although it would be possible to configure it, never connect a "B"
+side to another "B" side. It won't hurt anything, but the "B" sides
+are electrically incompatible with each other, and won't do a proper
+hookup.
+
+When you do hook up a "B" side, there is a slot open that cannot
+contain a modem. You could put a disk drive there, if you want, to
+help with program loads.
+
+With 2 cables, you can "Double Link" your 2 stations. You can use this
+to put line channel 1 and 2 at the same time. To make this work
+properly, you should enter the following commands on both sides:
+
+/R6A
+/R7A (connect the links)
+/R7B (block /SP from one of them)
+/P7/X7 (avoid /P777777... loop /P's)
+/P6/X6 (avoid /P666666... loop /P's)
+
+Other New Features:
+
+There are a number of other new features in the current update to
+Diversi-DIAL. Here is a summary:
+
+/R Commands: (n=1..7 and x=1..4)
+
+/RnO    Make caller #n a link, originate tones (auto dial if /J set)
+/RnA    Make caller #n a link, answer tones
+        /RnO and /RnA will pick up the phone and hold the
+        line with no carrier for 3 minutes. If you need
+        more time, enter /RnO or /RnA again for another
+        3 minutes.
+/RnT    Connect to caller #n in terminal mode.
+        If #n is not a link, convert to originate link first
+        (i.e. do automatic /RnO and auto dial first)
+/RxR    Remotes start on channel x (when >=900 PASSWORD entered)
+/RxS    Members (except remotes) start on channel x
+        (Non-members always start on channel 1)
+/RnM    Set maximum # callers on current channel (the channel
+        you are on when you type /RnM)
+/R0M    Only sysops can tune to current channel
+/R9M    Current channel becomes "Quiet". Only sysops can send public
+        messages to this channel. All others must /P.
+/RnF    System will be "Full" even if modem #n is open.
+/RxC    Set 2 carriage return per second dump for channel x=1..4
+/RxX    Set 14 char per second dump for channel x=1..4
+/RnE    Email Station: Accept /E requests from link #n
+/RnE    Non-Email Station: Send /E requests to link #n
+/RnB    Blocks all /SP and logon message from link #n
+        (must use this on one link of a double-linked station)
+        (/RnB also turns on beeps from remote signons)
+/R#     Increase/Decrease line length (leave OFF normally).
+        i.e. use to enter /M's, then turn back off.
+/RnL    Re-Logon caller #n
+
+PASSWORDS >=900
+
+If you enter a PASSWORD >=900, you are automatically connected in
+link mode. You should give passwords out to other sysops who you
+want to link with.
+
+Please give other stations your 900 password corresponding to their
+station number. I.E., give station number 23 member #923.
+
+Other New Commands and Features
+
+/J######x Set 7-digit phone number to dial with /Rnt and /RnO.
+          x=1..7 optional maximum modem # allowed to dial
+          (this is a keyboard only command)
+
+/CR    The caret character "^" is now converted to a carriage
+       return. You can use the ^ to format email, for example.
+       "Twits" cannot enter the ^. Even so, people abuse it and
+       annoy others. To minimize this, you can enter /CR to
+       turn the caret back to the character caret again.
+
+/CS    Suppresses the /SP lists during a remote link.
+       (You still see station link #)
+
+/CH    Remove your handle from /SP (see /ML)
+
+}      This character can no longer be entered. It is now used
+       only by link stations to identify the /SP list.
+
+/Txn   Tune remote link #n to channel #x
+
+/SP    Sends station list to remotes. Only works when a remote
+       is on your channel. Non-sysops can only do /SP every
+       1-2 minutes. A # sign in the /SP list shows callers
+       who are on the link channel. An empty handle means
+       that caller did /CS or is a non-member.
+
+/Hn<handle> If "n" is a remote link, then this changes the
+            handle of this link. If "n" is "0", this sets the
+            station name appearing at the top of /SP
+
+SYSOP Link Features:
+
+Sysops can now do commands on link stations. If "n" is the link
+modem, then a sysop can type /Pn/ and a command on the linked
+station. The following commands will work:
+
+/Pn/Tx    Move link to channel "x" on remote station.
+
+/Pn/H<handle> Enter your station handle in remote /S
+
+/Pn/Xm    Squelch caller "m" on remote station.
+
+/Pn/Q...  Enter sysop password on remote station.
+
+If you enter a sysop password with /Pn/Q, then you become a sysop on
+the remote station. You can then enter the following commands:
+
+/Pn/Km
+
+/Pn/Vm
+
+If you entered the system password the you can also do
+
+/Pn/R (all /R commands)
+
+/Pn/U (all /U commands)
+
+
+When you do /Pn/.... just imagine you are a normal caller on the
+remote station. You can do most of the commands a normal caller can
+do, except you don't see the --> Done.
+
+The sysop on the remote station can also use /G to turn your link
+into a "minor" co-sysop. You can then /Pn/K and /Pn/V on his
+station.
+
+Once you have entered /Pn/Q and the system password, you can even
+enter commands through 2 or more links. For example:
+
+/P1/Qpass       Enter password on first remote station
+/P14/Qnextpass  Enter password on second remote station
+/P14/K2         Kill caller #2 on 2nd remote station.
+
+Email:
+
+If you have a >900 number on another station, you can pick up email
+on that station. When you link to that station, pick up your email
+before exiting terminal mode. That is, type /E while in terminal
+mode. Note: you won't see --> No Email. Then hit ctrl-G to establish the
+link.
+
+APPLE II+ COMPUTER
+
+Diversi-DIAL now runs correctly on an Apple II+ with a 16K card in
+slot #0. There is no Email on an Apple II+, and the clock does not
+run correctly. However, you can use an Apple II+ to link to your
+main Apple //e with Interface Two cards.
+
+The Apple //e running Diversi-DIAL now sends a signal out the
+cassette port every second, for clock synchronization. To use this
+signal, you must cut R9 on the Apple //e mother board to raise the
+voltage level of the cassette output (see Diversi-DIAL program
+loading instructions).
+
+Connect the cassette output on the Apple //e to the cassette input on
+the Apple II+ (or linked Apple //e if you want). When setting the
+time on the linked computer, put an "*" between the AM and the
+seconds (or PM and the seconds). For example:
+
+/Z02/22/86  9:15 PM*00
+
+The clock will now be driven by the Apple //e from the cassette port.
+If no cassette input is sensed for 10 seconds, the "*" will disappear
+and you'll go back to the internal clock.
+
+You can daisy-chain the cassette output of the link computer to the
+cassette input of a 3rd computer to synchronize all three, if needed.
+
+UPPER/lower case
+
+The Apple II+ keyboard cannot operate lower case. Diversi-DIAL now
+supports the "Shift Key Mod". The easiest way to make the shift key
+mod on an Apple II+ is to buy 2 very small clip-on test leads at
+Radio Shack. They are plastic, with a little hook at the tip that
+can clip onto a single pin of an IC. Solder a test clip to both ends
+pf a wire. Clip one side onto the second pin from the right on the
+Apple II keyboard encoder. It's right below the "*" key
+approximately. Clip the other lead onto pin 1 of the 74LS25 directly
+in front of the Game Socket. Pin 1 is the lower right corner.
+
+To get Diversi-DIAL to recognize the shift key mod, enter:
+
+/DS
+
+With the shift key mod, the ^ character is now ctrl-N, instead of
+shift-N. The \, backslash character is shift-0.
+
+The II+ screen only displays uppercase. You can get a lowercase
+video display chip (Ask your dealer), if you want to see lowercase.
+Diversi-DIAL converts lower to uppercase on the II+, unless you enter
+
+/DU
+
+When you are converting to Uppercase, you can enter:
+
+/D
+
+This will convert real uppercase characters to inverse.
+
+Two other commands function on an Apple II+ as follows:
+
+/CI - Increase screen display speed
+/CD - Decrease screen display speed
+
+MISCELLANEOUS FEATURES:
+
+/FS     Suppresses the self echo.
+/I3     Shows channel capacities
+/I9     Disappears with /U-992, except it gives the main
+        D-Dial number (313-553-4373). Please tell people
+        who want more D-Dial info to call this number
+
+PASSWORD OPTION:
+
+If you don't want your PASSWORDS to change every month, you can now
+specify which month and year you want to use semi-permanently. You
+do this when setting the time with /Z. For example:
+
+/Z02/22/86  9:34 PM 00%01/86
+
+The "%" after the seconds shows that the PASSWORD month and year
+follow. With the above example, you would use your January, 1986
+PASSWORDS even though it is actually February. You would then
+control your password system with /U commands. Personally, I don't
+recommend using this, but at least you have the option. It's much
+harder for you to /U- someone who doesn't pay, than it is for you to
+let the system do it automatically at the end of the month. But, the
+choice is yours now.
+
+Please refer to the main documentation for the new /U commands.
+Also, note that the program length for cassette loading is:
+
+1800.9C00W
+
+1800.9C00R 2000G
+
+EDITING SIGNON AND /I1 MESSAGES:
+
+You can modify the opening message and the /I1 message. Choose
+option #7 from the Diversi-DIAL menu, then choose which message you
+want to modify.
+
+The messages you insert cannot be longer that the old messages. When
+you reach the maximum message length, you will hear beeps.
+
+When you edit the /I1 message, you will no longer enter /O from the
+keyboard. You should include your "Owner" message in the /I1.
+
+When you lock your system, non-members will first see your /MZ
+message, and the last part of your /I1 message, if you wish. When
+entering your new /I1, put a "^" (caret) character at the point where
+you want non-members to start in your /I1 during lockout. If you
+don't want to show the /I1, don't enter a "^".
+
+REMOTE EMAIL:
+
+Read /ML in the program to see how to send email to a remote station.
+If you don't want to get Email from linked stations, enter /U-995.
+
+When you receive Email from a remote station it looks like this:
+
+==> From: #@21=D-Dial #21
+(103*:Joe) Hi
+==> Date Sent: 04/07/86  3:30 PM
+
+This message came from Joe, who is member #103 on Diversi-DIAL
+station number 21. Note that you can only send a message back to Joe
+when your station is linked with his station again. When you link to
+Joe's station again, you would answer him with:
+
+/Pn/E103 OK Joe, got your message. HI.
+
+You cannot enter /E@21 to answer Joe. However, you can enter:
+
+/E-@21
+
+This will delete all Email sent to you from anyone on D-DIAL #21.
+
+Sysops can request the /SM member list from any linked station with:
+
+/Pn/SM
+/Pn/SC
+
+The /SM list is returned in public to everyone on your end of the
+link.
+
+Direct link Email:
+
+With direct linked stations, only one station should have an extended
+80-column card to hold the Email. The other stations may be Apple
+II+ computers, if you wish. When you type /E on a station without
+Email, you can send the request over to the station with the Email.
+
+To enable this feature you must type:
+
+/R7E
+
+On the non-Email computer, this tells the program to send /E requests
+to the link in slot #7, i.e. to the Email computer.
+
+In order for the Email computer to respond, you must also enter /R7E
+on it as well. That is, you must enter /RnE on both sides of the
+link.
+
+Don't ever use /RnE unless both computers have the same PASSWORDs.
+Otherwise, members from one station will pick up Email addressed to
+members on the other station with the same member number.
+
+You may link more than 1 non-email computer to a single email
+computer. Just /RnE the link slots on all computers. All non-email
+computers must be connected directly to the email computer. You
+could link 7 non-email computers (6 lines each) to a single Email
+computer, for a total station capacity of 42 phone lines.
+
+
