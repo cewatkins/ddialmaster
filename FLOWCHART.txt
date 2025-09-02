@@ -1,23 +1,29 @@
 ===============================================================================
                     DIVERSI-DIAL MASTER SYSTEM FLOWCHART
 ===============================================================================
+                          Apple //e Hardware Architecture
+                    7 Hayes Micromodem //e + 1 Console Channel
+                        Real-time Multi-user BBS Operation
 
                                ┌─────────────┐
                                │   RESET     │
-                               │  ($2000)    │
+                               │  ($FFFC)    │
+                               │  Vector     │
                                └──────┬──────┘
                                       │
                                       ▼
                                ┌─────────────┐
                                │INIT ROUTINE │
                                │  ($1800)    │
+                               │CPU Setup    │
                                └──────┬──────┘
                                       │
                          ┌────────────┴────────────┐
                          ▼                         ▼
                   ┌─────────────┐           ┌─────────────┐
                   │SET STACK    │           │CLEAR SCREEN │
-                  │PTR ($FF)    │           │ ($0400)     │
+                  │PTR ($01FF)  │           │ ($0400)     │
+                  │TXS          │           │Text Memory  │
                   └──────┬──────┘           └──────┬──────┘
                          │                         │
                          └────────────┬────────────┘
@@ -25,6 +31,7 @@
                                ┌─────────────┐
                                │INIT SYSTEM  │
                                │VARIABLES    │
+                               │Zero Page    │
                                │($18E3-$18F8)│
                                └──────┬──────┘
                                       │
@@ -32,38 +39,44 @@
                                ┌─────────────┐
                                │SETUP 8      │
                                │CHANNELS     │
-                               │($18C7-$18CD)│
+                               │Buffer Ptrs  │
+                               │($C0-$C7)    │
                                └──────┬──────┘
                                       │
                                       ▼
                                ┌─────────────┐
-                               │COPY DATA    │
-                               │TABLES       │
-                               │($183B-$184E)│
+                               │INIT HARDWARE│
+                               │ACIA Setup   │
+                               │Modem Config │
+                               │($1853-$1897)│
                                └──────┬──────┘
                                       │
                                       ▼
                         ┌─────────────────────────┐
                         │    MAIN PROGRAM LOOP    │
                         │       ($28B4)          │
+                        │   Real-time Polling    │
                         └───────────┬─────────────┘
                                     │
                                     ▼
                         ┌─────────────────────────┐
                         │   CHECK SYSTEM FLAGS    │
                         │     ($28B6-$28BF)      │
+                        │   Status Display       │
                         └───────────┬─────────────┘
                                     │
                                     ▼
                         ┌─────────────────────────┐
                         │  CALL SYSTEM UPDATE     │
                         │    JSR $7FD3           │
+                        │  Time/Counter Mgmt     │
                         └───────────┬─────────────┘
                                     │
                                     ▼
                         ┌─────────────────────────┐
                         │   CHECK INPUT BUFFER    │
                         │      LDA $A0           │
+                        │   Multi-channel        │
                         └───────────┬─────────────┘
                                     │
                      ┌──────────────┴──────────────┐
@@ -71,12 +84,14 @@
           ┌─────────────────┐                ┌─────────────────┐
           │   BUFFER EMPTY  │                │  BUFFER HAS     │
           │   ($2919)       │                │     DATA        │
+          │ Check Keyboard  │                │ Process Input   │
           └─────────┬───────┘                └─────────┬───────┘
                     │                                  │
                     ▼                                  ▼
           ┌─────────────────┐                ┌─────────────────┐
-          │ CHECK FOR NEW   │                │  PROCESS INPUT  │
-          │     INPUT       │                │   ($28CF-$28F3) │
+          │ KEYBOARD CHECK  │                │  INPUT ROUTER   │
+          │   ($C000)       │                │   ($28CF-$28F3) │
+          │ Apple //e KBD   │                │ Channel Select  │
           └─────────┬───────┘                └─────────┬───────┘
                     │                                  │
                     └─────────────┬────────────────────┘
@@ -85,32 +100,37 @@
                         │     SERIAL I/O          │
                         │    PROCESSING           │
                         │  ($1853-$1897)         │
+                        │ ACIA Communication     │
                         └───────────┬─────────────┘
                                     │
                      ┌──────────────┴──────────────┐
                      ▼                             ▼
           ┌─────────────────┐                ┌─────────────────┐
-          │  UART STATUS    │                │  CHARACTER      │
+          │  ACIA STATUS    │                │  CHARACTER      │
           │    CHECK        │                │   RECEIVED      │
-          │   ($1862)       │                │   ($1867)       │
+          │   ($9001)       │                │   ($1862)       │
+          │ Hayes/SSC Port  │                │ Data Ready      │
           └─────────┬───────┘                └─────────┬───────┘
                     │                                  │
                     ▼                                  ▼
           ┌─────────────────┐                ┌─────────────────┐
           │   NO DATA       │                │    COMMAND      │
           │   RETURN        │                │   PROCESSING    │
+          │ Poll Next Chan  │                │   ($1867-$1887) │
           └─────────────────┘                └─────────┬───────┘
                                                        │
                                                        ▼
                                             ┌─────────────────┐
                                             │  PARSE COMMAND  │
                                             │    ($224A)      │
+                                            │ Channel Router  │
                                             └─────────┬───────┘
                                                       │
                                                       ▼
                                             ┌─────────────────┐
                                             │  CHECK COMMAND  │
-                                            │    PREFIX (#)   │
+                                            │   PREFIX (/)    │
+                                            │ Validate Format │
                                             └─────────┬───────┘
                                                       │
                                        ┌──────────────┴──────────────┐
@@ -118,6 +138,7 @@
                             ┌─────────────────┐                ┌─────────────────┐
                             │ INVALID COMMAND │                │ VALID COMMAND   │
                             │     EXIT        │                │   CONTINUE      │
+                            │ Error Response  │                │ Execute Action  │
                             └─────────────────┘                └─────────┬───────┘
                                                                          │
                                                                          ▼
@@ -297,6 +318,57 @@ JSR $XXXX     Jump to Subroutine at Address
 ===============================================================================
                               KEY ADDRESSES
 ===============================================================================
+                          APPLE //E HARDWARE MAP
+===============================================================================
+
+MEMORY LAYOUT:
+$0000-$00FF   Zero Page Variables (fast access)
+  $C0-$C7     Channel buffer pointers (8 channels)
+  $D0-$D7     Channel status flags
+  $E0-$E7     User authentication state
+  $F0-$F7     Session timing and management
+
+$0100-$01FF   6502 Processor Stack
+$0400-$07FF   Apple //e Text Screen Memory (40x24)
+  $0400-$047F Line 1 (system status display)
+  $0480-$04FF Line 2 (channel/user display)
+  
+$0800-$08FF   Input Buffer (256 bytes)
+$1800-$2000   Program Initialization
+$2000-$4000   Main Program Code
+$4000-$6000   User Database and Buffers
+$6000-$8000   Email Storage System (64K)
+$8000-$9000   Command Processing Tables
+$9000-$9600   System Variables and Status
+
+APPLE //E I/O REGISTERS:
+$C000 KBD     Keyboard Data (bit 7 = key pressed)
+$C010 KBDSTRB Keyboard Strobe (read to acknowledge)
+$C030 SPKR    Speaker Toggle (audio feedback)
+$C050-$C057   Video Mode Control (text/graphics)
+$C080-$C08F   Language Card Bank Switching
+
+PERIPHERAL SLOTS (Hayes Micromodem //e):
+Slot 1: $C090-$C09F (Line 1)
+  $C095 RING  Ring Indicator
+  $C096 STATUS ACIA Status Register  
+  $C097 DATA  ACIA Data Register
+
+Slot 2: $C0A0-$C0AF (Line 2)
+Slot 3: $C0B0-$C0BF (Line 3)
+Slot 4: $C0C0-$C0CF (Line 4)
+Slot 5: $C0D0-$C0DF (Line 5)
+Slot 6: $C0E0-$C0EF (Line 6)
+Slot 7: $C0F0-$C0FF (Line 7)
+
+ACIA STATUS REGISTER BITS:
+Bit 3: RDRF (Receive Data Register Full)
+Bit 4: TDRE (Transmit Data Register Empty)  
+Bit 7: IRQ (Interrupt Request)
+
+===============================================================================
+                            KEY ADDRESSES
+===============================================================================
 
 $1800         Main initialization entry point
 $1853-$1897   Serial communication handlers  
@@ -320,15 +392,16 @@ Diversi-DIAL Master operates as a sophisticated multi-line BBS system:
 1. BOOT & INITIALIZATION:
    - 4-minute cassette load into Apple //e (64K required)
    - Initialize 8 channels (7 modems + 1 console operator)
+   - Setup ACIA registers for Hayes Micromodem //e communication
    - Clear 80-column screen, setup email system (requires 80-col card)
    - Initialize version display, system counters, memory layout
 
-2. MAIN REAL-TIME LOOP:
-   - Continuously monitor all 8 communication channels
-   - Process UART input from Novation Apple Cat II / Hayes modems
-   - Handle keyboard input from console operator
-   - Update system status display (top 2 screen lines)
-   - Manage system time, call counters, user time limits
+2. REAL-TIME HARDWARE POLLING:
+   - Round-robin polling of ACIA status registers ($C096, $C0A6, etc.)
+   - Interrupt-driven serial communication with IRQ handling
+   - Keyboard monitoring via $C000 (Apple //e KBD register)
+   - Memory banking for user data and email storage
+   - Text screen updates for real-time status display
 
 3. COMMAND PROCESSING:
    - Parse "/" commands with three access levels:
@@ -338,15 +411,31 @@ Diversi-DIAL Master operates as a sophisticated multi-line BBS system:
    - Route commands to appropriate handlers
    - Validate user permissions before execution
 
-4. MULTI-CHANNEL CHAT:
+4. MULTI-CHANNEL COMMUNICATION:
    - 4 chat channels with independent user groups
    - Real-time message broadcasting within channels
    - Private messaging between any users (/P command)
    - Channel joining/switching (/J command)
+   - ACIA-based modem communication at 300-1200 baud
 
-5. EMAIL SYSTEM:
-   - Built-in email with user accounts
-   - 64K dedicated email storage space
+5. ADVANCED FEATURES:
+   - Built-in email with user accounts and 64K storage
+   - Station linking for multi-BBS networks via phone/parallel
+   - Three-tier access control with sophisticated passwords
+   - System logging with security auditing
+   - Real-time user monitoring and administrative control
+   - Automatic time management and resource allocation
+
+6. HARDWARE REQUIREMENTS:
+   - Apple //e with 64K RAM and 80-column card
+   - 1-7 Hayes Micromodem //e cards in peripheral slots
+   - Dedicated phone lines with hunt group capability
+   - Cassette tape drive for program loading (4 minutes)
+   - Optional parallel cards for station linking
+
+The system represents advanced BBS technology for 1985, providing professional
+multi-line operation with sophisticated real-time user management on Apple //e
+hardware architecture.
    - Message composition, reading, deletion
    - Requires 80-column card for full functionality
 

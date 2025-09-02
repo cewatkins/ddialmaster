@@ -345,3 +345,67 @@ This represents a complete preservation effort suitable for:
 - BBS archaeology and analysis
 - 6502 programming education
 - Telecommunications history study
+
+## Session 5: Hardware-Specific Enhancement (Latest)
+
+**User Request:** "I have added the source code in javascript that emulates the 6502 computer that the disassembled program is for. The code for the hardware cards, serial cards, screens are in there, use this code to further comment the disassembly specifically with the knowledge of what the assembly is doing in the machine."
+
+**Analysis Performed:**
+The user provided the JACE emulator source code (Java, not JavaScript) which contains detailed Apple //e hardware emulation including:
+- MOS65C02 CPU implementation with all registers and flags
+- Apple //e memory management (RAM128k) with bank switching
+- SoftSwitches for I/O control ($C000-$C07F range)
+- Hardware cards: Super Serial Card (SSC), Hayes Micromodem //e
+- Video subsystem and text screen memory layout
+- Keyboard input handling via $C000/$C010 registers
+
+**Enhancements Made:**
+1. **UART/Serial Communication**: Enhanced comments for $9001 register access with specific ACIA details:
+   - Added Hayes Micromodem register descriptions (registers 5, 6, 7)
+   - Added SSC register descriptions (registers 8, 9, A, B)
+   - Documented ACIA status bits (RDRF, TDRE, IRQ flags)
+
+2. **Memory Management**: Enhanced zero-page variable initialization:
+   - Documented $C0-$C7 as channel buffer pointers for 8 lines
+   - Explained Apple //e text screen memory layout and addressing
+   - Added context for bank switching and auxiliary memory usage
+
+3. **Keyboard Input**: Enhanced keyboard handling at $C000/$C010:
+   - Documented KBD register (keyboard data with bit 7 flag)
+   - Documented KBDSTRB register (keyboard strobe/acknowledge)
+   - Added Apple //e keyboard protocol details
+
+4. **Command Parser**: Enhanced main command processor at $224A:
+   - Added Apple //e text screen addressing specifics
+   - Documented self-modifying code for dynamic dispatch
+   - Enhanced channel management and status tracking
+
+5. **Main Loop**: Enhanced real-time processing loop at $28B4:
+   - Added timing and status display details
+   - Documented multi-channel input buffer management
+   - Enhanced interrupt handling context
+
+6. **Comprehensive Hardware Documentation**: Added extensive section covering:
+   - Complete Apple //e memory architecture and MMU details
+   - All relevant softswitches ($C000-$C0FF) with functions
+   - Detailed ACIA register specifications for both Hayes and SSC
+   - Memory banking strategies for multi-user operation
+   - Real-time operation techniques and timing
+   - Channel management structure in zero page
+   - Peripheral card slot assignments
+   - 80-column card requirements and auxiliary memory
+   - Historical context of the hardware implementation
+
+**Technical Insights Gained:**
+- Diversi-DIAL uses sophisticated Apple //e memory banking for multi-user support
+- The system implements real-time operation through interrupt-driven ACIA communication
+- Zero page is strategically used for fast channel switching ($C0-$F7 range)
+- The software supports both Hayes Micromodem //e and SSC cards with different register layouts
+- Text screen memory is used for real-time status displays with precise addressing
+- The system requires 80-column card for email functionality and additional memory
+
+**Files Updated:**
+- `dialmstr.txt`: Enhanced with detailed Apple //e hardware implementation comments throughout
+- `chat.txt`: Updated with this session summary
+
+This enhancement provides deep hardware-level understanding of how Diversi-DIAL interfaces with Apple //e hardware, making the disassembly much more comprehensible for anyone studying early BBS system implementation or Apple //e programming techniques.
