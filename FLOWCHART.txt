@@ -1,0 +1,338 @@
+===============================================================================
+                    DIVERS-DIAL MASTER SYSTEM FLOWCHART
+===============================================================================
+
+                               ┌─────────────┐
+                               │   RESET     │
+                               │  ($2000)    │
+                               └──────┬──────┘
+                                      │
+                                      ▼
+                               ┌─────────────┐
+                               │INIT ROUTINE │
+                               │  ($1800)    │
+                               └──────┬──────┘
+                                      │
+                         ┌────────────┴────────────┐
+                         ▼                         ▼
+                  ┌─────────────┐           ┌─────────────┐
+                  │SET STACK    │           │CLEAR SCREEN │
+                  │PTR ($FF)    │           │ ($0400)     │
+                  └──────┬──────┘           └──────┬──────┘
+                         │                         │
+                         └────────────┬────────────┘
+                                      ▼
+                               ┌─────────────┐
+                               │INIT SYSTEM  │
+                               │VARIABLES    │
+                               │($18E3-$18F8)│
+                               └──────┬──────┘
+                                      │
+                                      ▼
+                               ┌─────────────┐
+                               │SETUP 8      │
+                               │CHANNELS     │
+                               │($18C7-$18CD)│
+                               └──────┬──────┘
+                                      │
+                                      ▼
+                               ┌─────────────┐
+                               │COPY DATA    │
+                               │TABLES       │
+                               │($183B-$184E)│
+                               └──────┬──────┘
+                                      │
+                                      ▼
+                        ┌─────────────────────────┐
+                        │    MAIN PROGRAM LOOP    │
+                        │       ($28B4)          │
+                        └───────────┬─────────────┘
+                                    │
+                                    ▼
+                        ┌─────────────────────────┐
+                        │   CHECK SYSTEM FLAGS    │
+                        │     ($28B6-$28BF)      │
+                        └───────────┬─────────────┘
+                                    │
+                                    ▼
+                        ┌─────────────────────────┐
+                        │  CALL SYSTEM UPDATE     │
+                        │    JSR $7FD3           │
+                        └───────────┬─────────────┘
+                                    │
+                                    ▼
+                        ┌─────────────────────────┐
+                        │   CHECK INPUT BUFFER    │
+                        │      LDA $A0           │
+                        └───────────┬─────────────┘
+                                    │
+                     ┌──────────────┴──────────────┐
+                     ▼                             ▼
+          ┌─────────────────┐                ┌─────────────────┐
+          │   BUFFER EMPTY  │                │  BUFFER HAS     │
+          │   ($2919)       │                │     DATA        │
+          └─────────┬───────┘                └─────────┬───────┘
+                    │                                  │
+                    ▼                                  ▼
+          ┌─────────────────┐                ┌─────────────────┐
+          │ CHECK FOR NEW   │                │  PROCESS INPUT  │
+          │     INPUT       │                │   ($28CF-$28F3) │
+          └─────────┬───────┘                └─────────┬───────┘
+                    │                                  │
+                    └─────────────┬────────────────────┘
+                                  ▼
+                        ┌─────────────────────────┐
+                        │     SERIAL I/O          │
+                        │    PROCESSING           │
+                        │  ($1853-$1897)         │
+                        └───────────┬─────────────┘
+                                    │
+                     ┌──────────────┴──────────────┐
+                     ▼                             ▼
+          ┌─────────────────┐                ┌─────────────────┐
+          │  UART STATUS    │                │  CHARACTER      │
+          │    CHECK        │                │   RECEIVED      │
+          │   ($1862)       │                │   ($1867)       │
+          └─────────┬───────┘                └─────────┬───────┘
+                    │                                  │
+                    ▼                                  ▼
+          ┌─────────────────┐                ┌─────────────────┐
+          │   NO DATA       │                │    COMMAND      │
+          │   RETURN        │                │   PROCESSING    │
+          └─────────────────┘                └─────────┬───────┘
+                                                       │
+                                                       ▼
+                                            ┌─────────────────┐
+                                            │  PARSE COMMAND  │
+                                            │    ($224A)      │
+                                            └─────────┬───────┘
+                                                      │
+                                                      ▼
+                                            ┌─────────────────┐
+                                            │  CHECK COMMAND  │
+                                            │    PREFIX (#)   │
+                                            └─────────┬───────┘
+                                                      │
+                                       ┌──────────────┴──────────────┐
+                                       ▼                             ▼
+                            ┌─────────────────┐                ┌─────────────────┐
+                            │ INVALID COMMAND │                │ VALID COMMAND   │
+                            │     EXIT        │                │   CONTINUE      │
+                            └─────────────────┘                └─────────┬───────┘
+                                                                         │
+                                                                         ▼
+                                                              ┌─────────────────┐
+                                                              │ EXTRACT CHANNEL │
+                                                              │   NUMBER (0-9)  │
+                                                              └─────────┬───────┘
+                                                                        │
+                                                         ┌──────────────┴──────────────┐
+                                                         ▼                             ▼
+                                              ┌─────────────────┐                ┌─────────────────┐
+                                              │ INVALID CHANNEL │                │ VALID CHANNEL   │
+                                              │   (>7 or 0)     │                │    (1-7)        │
+                                              └─────────────────┘                └─────────┬───────┘
+                                                                                           │
+                                                                                           ▼
+                                                                                ┌─────────────────┐
+                                                                                │ EXTRACT COMMAND │
+                                                                                │    CHARACTER    │
+                                                                                └─────────┬───────┘
+                                                                                          │
+                                          ┌───────────────────────────────────────────────┴───────────────────────────────────────────────┐
+                                          ▼                             ▼                             ▼                             ▼
+                                ┌─────────────────┐           ┌─────────────────┐           ┌─────────────────┐           ┌─────────────────┐
+                                │  'M' COMMAND    │           │  'O' COMMAND    │           │  'A' COMMAND    │           │  'L' COMMAND    │
+                                │   Message/      │           │   Open/         │           │    Answer       │           │   Line/Link     │
+                                │     Mode        │           │   Online        │           │                 │           │                 │
+                                │   ($2302)       │           │   ($22E5)       │           │   ($22E9)       │           │   ($22ED)       │
+                                └─────────┬───────┘           └─────────┬───────┘           └─────────┬───────┘           └─────────┬───────┘
+                                          │                             │                             │                             │
+                                          │                             ▼                             ▼                             ▼
+                                          │                   ┌─────────────────┐           ┌─────────────────┐           ┌─────────────────┐
+                                          │                   │  OPEN CHANNEL   │           │ ANSWER INCOMING │           │  CHECK LINE     │
+                                          │                   │   FOR COMM      │           │   CONNECTION    │           │    STATUS       │
+                                          │                   └─────────────────┘           └─────────────────┘           └─────────┬───────┘
+                                          │                                                                                           │
+                                          │                                                                                           ▼
+                                          │                                                                                 ┌─────────────────┐
+                                          │                                                                                 │ MANAGE LINE     │
+                                          │                                                                                 │   CONNECTION    │
+                                          │                                                                                 └─────────┬───────┘
+                                          │                                                                                           │
+                                          └─────────────┬─────────────┬─────────────────────────────────────────────────────────────┘
+                                                        ▼             ▼
+                                              ┌─────────────────┐           ┌─────────────────┐
+                                              │  'F' COMMAND    │           │  'B' COMMAND    │
+                                              │   Flip/Flag     │           │  Break/Busy     │
+                                              │   ($2322)       │           │   ($2326)       │
+                                              └─────────┬───────┘           └─────────┬───────┘
+                                                        │                             │
+                                                        ▼                             ▼
+                                              ┌─────────────────┐           ┌─────────────────┐
+                                              │  TOGGLE CHANNEL │           │  SET CHANNEL    │
+                                              │     FLAGS       │           │   TO BUSY       │
+                                              └─────────┬───────┘           └─────────┬───────┘
+                                                        │                             │
+                                          ┌─────────────┴─────────────┬───────────────┘
+                                          ▼                           ▼
+                                ┌─────────────────┐           ┌─────────────────┐
+                                │  'E' COMMAND    │           │  'X' COMMAND    │
+                                │   End/Exit      │           │   eXchange      │
+                                │   ($232A)       │           │   ($232E)       │
+                                └─────────┬───────┘           └─────────┬───────┘
+                                          │                             │
+                                          ▼                             ▼
+                                ┌─────────────────┐           ┌─────────────────┐
+                                │ END CHANNEL     │           │  EXCHANGE DATA  │
+                                │   SESSION       │           │  BETWEEN CHANS  │
+                                └─────────┬───────┘           └─────────┬───────┘
+                                          │                             │
+                                          └─────────────┬───────────────┘
+                                                        ▼
+                                              ┌─────────────────┐
+                                              │  'C' COMMAND    │
+                                              │   Connect/      │
+                                              │   Channel       │
+                                              │   ($2332)       │
+                                              └─────────┬───────┘
+                                                        │
+                                                        ▼
+                                              ┌─────────────────┐
+                                              │ CONNECT TO      │
+                                              │ SPECIFIC CHAN   │
+                                              └─────────┬───────┘
+                                                        │
+                                                        ▼
+                                              ┌─────────────────┐
+                                              │  'T' COMMAND    │
+                                              │  Terminal/Talk  │
+                                              │   ($2336)       │
+                                              └─────────┬───────┘
+                                                        │
+                                                        ▼
+                                              ┌─────────────────┐
+                                              │ ENTER TERMINAL  │
+                                              │     MODE        │
+                                              └─────────┬───────┘
+                                                        │
+                                                        ▼
+                                              ┌─────────────────┐
+                                              │ UPDATE CHANNEL  │
+                                              │     STATUS      │
+                                              └─────────┬───────┘
+                                                        │
+                                                        ▼
+                                              ┌─────────────────┐
+                                              │ CALL CHANNEL    │
+                                              │ UPDATE ROUTINE  │
+                                              │  JSR $7F98      │
+                                              └─────────┬───────┘
+                                                        │
+                                                        ▼
+                                              ┌─────────────────┐
+                                              │ RETURN TO MAIN  │
+                                              │     LOOP        │
+                                              │   ($2A24)       │
+                                              └─────────┬───────┘
+                                                        │
+                                                        └─────────────────────┐
+                                                                              │
+                                                                              ▼
+                                                                    ┌─────────────────┐
+                                                                    │ CONTINUE MAIN   │
+                                                                    │     LOOP        │
+                                                                    │   ($2A24)       │
+                                                                    └─────────┬───────┘
+                                                                              │
+                                                                              └──────────┐
+                                                                                         │
+                                                                                         ▼
+                                                                               ┌─────────────────┐
+                                                                               │ SYSTEM UPDATE   │
+                                                                               │ AND DISPLAY     │
+                                                                               │   MANAGEMENT    │
+                                                                               └─────────┬───────┘
+                                                                                         │
+                                                                                         ▼
+                                                                               ┌─────────────────┐
+                                                                               │ CHECK FOR MORE  │
+                                                                               │     INPUT       │
+                                                                               └─────────┬───────┘
+                                                                                         │
+                                                                                         └───────────┐
+                                                                                                     │
+                                                                              ┌──────────────────────┘
+                                                                              │
+                                                                              ▼
+                                                                    ┌─────────────────┐
+                                                                    │ JUMP BACK TO    │
+                                                                    │   MAIN LOOP     │
+                                                                    │   ($28B4)       │
+                                                                    └─────────┬───────┘
+                                                                              │
+                                                                              └─┐
+                                                                                │
+                                     ┌──────────────────────────────────────────┘
+                                     │
+                                     └──► INFINITE LOOP - SYSTEM RUNS CONTINUOUSLY
+
+
+===============================================================================
+                                LEGEND
+===============================================================================
+
+┌─────────┐   Process/Function Block
+│         │   
+└─────────┘   
+
+    ▼         Flow Direction (Down)
+    
+    ───►      Flow Direction (Right/Left)
+    
+($XXXX)       Memory Address Reference
+
+JSR $XXXX     Jump to Subroutine at Address
+
+===============================================================================
+                              KEY ADDRESSES
+===============================================================================
+
+$1800         Main initialization entry point
+$1853-$1897   Serial communication handlers  
+$189A         System initialization subroutine
+$2000         System reset vector
+$224A         Command processing entry
+$28B4         Main program loop
+$2A24         Main loop continuation point
+$3ACB         Output routine
+$6002         Channel output routine
+$7F98         Channel update routine
+$7FD3         System update routine
+$9001         UART data register
+
+===============================================================================
+                            SYSTEM OVERVIEW
+===============================================================================
+
+The Divers-Dial Master operates as a continuous loop system:
+
+1. INITIALIZATION: Sets up 8 communication channels, clears memory,
+   configures UART, and prepares system tables.
+
+2. MAIN LOOP: Continuously checks for input, processes commands,
+   manages channel states, and handles serial I/O.
+
+3. COMMAND PROCESSING: Parses commands in format #<channel><command>
+   and executes appropriate channel operations.
+
+4. CHANNEL MANAGEMENT: Maintains state for up to 8 simultaneous
+   communication channels with individual buffers and status.
+
+5. SERIAL I/O: Handles UART communication for data transmission
+   and reception across all active channels.
+
+The system is designed for continuous operation as a telecommunications
+hub, likely for BBS or modem pool applications.
+
+===============================================================================
