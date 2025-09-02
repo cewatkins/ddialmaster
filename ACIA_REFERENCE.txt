@@ -1,0 +1,328 @@
+# ACIA Reference Guide
+
+## Hayes Micromodem //e and Super Serial Card Register Reference
+
+This document provides detailed register specifications for the ACIA (Asynchronous Communications Interface Adapter) chips used in Hayes Micromodem //e and Super Serial Card implementations for Diversi-DIAL Master.
+
+## Hayes Micromodem //e Register Layout
+
+The Hayes Micromodem //e uses a simplified 3-register interface in each peripheral slot:
+
+### Register Mapping (Slot n: $C0n0-$C0nF)
+```
+$C0n5   RING     Ring Indicator Register (read-only)
+$C0n6   STATUS   ACIA Status Register (read-only)  
+$C0n7   DATA     ACIA Data Register (read/write)
+```
+
+### Ring Indicator Register ($C0n5)
+```
+Bit 7: Reserved (0)
+Bit 6: Reserved (0)
+Bit 5: Reserved (0)
+Bit 4: Reserved (0)
+Bit 3: Reserved (0)
+Bit 2: Reserved (0)
+Bit 1: Reserved (0)
+Bit 0: Ring Detected (0 = ring signal present, 1 = no ring)
+```
+
+**Usage Notes:**
+- Reading this register indicates incoming call status
+- Bit 0 is inverted: 0 means ring detected
+- Used for auto-answer functionality
+- Updates in real-time with phone line status
+
+### ACIA Status Register ($C0n6)
+```
+Bit 7: IRQ    Interrupt Request (1 = interrupt pending)
+Bit 6: DSR    Data Set Ready (0 = modem ready)
+Bit 5: DCD    Data Carrier Detect (0 = carrier present) 
+Bit 4: TDRE   Transmit Data Register Empty (1 = ready to send)
+Bit 3: RDRF   Receive Data Register Full (1 = data available)
+Bit 2: OVRN   Overrun Error (1 = data lost)
+Bit 1: FE     Framing Error (1 = invalid stop bit)
+Bit 0: PE     Parity Error (1 = parity mismatch)
+```
+
+**Status Bit Details:**
+
+#### IRQ (Bit 7) - Interrupt Request
+- Set when interrupt condition occurs
+- Cleared when interrupt source is serviced
+- Sources: RDRF, TDRE, DCD change, error conditions
+
+#### DSR (Bit 6) - Data Set Ready  
+- 0 = Modem is ready and operational
+- 1 = Modem not ready or offline
+- Inverted logic: 0 means ready
+
+#### DCD (Bit 5) - Data Carrier Detect
+- 0 = Remote modem carrier signal detected
+- 1 = No carrier signal present  
+- Inverted logic: 0 means connected
+
+#### TDRE (Bit 4) - Transmit Data Register Empty
+- 1 = ACIA ready to accept new data for transmission
+- 0 = Previous data still being transmitted
+- Write to DATA register when this bit is 1
+
+#### RDRF (Bit 3) - Receive Data Register Full
+- 1 = New data available in receive buffer
+- 0 = No new data available
+- Read DATA register when this bit is 1
+
+#### OVRN (Bit 2) - Overrun Error
+- 1 = Previous data was not read before new data arrived
+- 0 = No overrun condition
+- Indicates software not keeping up with data rate
+
+#### FE (Bit 1) - Framing Error  
+- 1 = Stop bit was not detected properly
+- 0 = Valid frame received
+- Usually indicates baud rate mismatch
+
+#### PE (Bit 0) - Parity Error
+- 1 = Received parity does not match expected
+- 0 = Parity is correct
+- Only meaningful when parity is enabled
+
+### ACIA Data Register ($C0n7)
+```
+Read Operation:  Returns received character (0-255)
+Write Operation: Transmits character (0-255)
+```
+
+**Read Behavior:**
+- Returns last received character
+- Reading clears RDRF flag
+- Should only read when RDRF = 1
+- Character includes parity bit if enabled
+
+**Write Behavior:**  
+- Starts transmission of character
+- Should only write when TDRE = 1
+- Character format determined by control settings
+- Writing clears TDRE flag
+
+## Super Serial Card (SSC) Register Layout
+
+The SSC uses a 4-register ACIA interface with more control options:
+
+### Register Mapping (Slot n: $C0n0-$C0nF)
+```
+$C0n8   DATA      ACIA Data Register (read/write)
+$C0n9   STATUS    ACIA Status/Reset Register  
+$C0nA   COMMAND   ACIA Command Register (write)
+$C0nB   CONTROL   ACIA Control Register (write)
+```
+
+### SSC Data Register ($C0n8)
+Identical function to Hayes DATA register:
+- Read: Receive data when RDRF = 1
+- Write: Transmit data when TDRE = 1
+
+### SSC Status Register ($C0n9)
+```
+Bit 7: IRQ    Interrupt Request (1 = interrupt pending)
+Bit 6: DSR    Data Set Ready (0 = ready)
+Bit 5: DCD    Data Carrier Detect (0 = carrier present)
+Bit 4: TDRE   Transmit Data Register Empty (1 = ready)
+Bit 3: RDRF   Receive Data Register Full (1 = data available)
+Bit 2: OVRN   Overrun Error (1 = error)
+Bit 1: FE     Framing Error (1 = error)  
+Bit 0: PE     Parity Error (1 = error)
+```
+
+**Reset Function:**
+- Writing any value resets the ACIA
+- Clears all status flags and errors
+- Initializes internal state
+
+### SSC Command Register ($C0nA)
+```
+Bit 7: Reserved (0)
+Bit 6: Reserved (0)  
+Bit 5: Parity Enable (0 = disabled, 1 = enabled)
+Bit 4: Echo Mode (0 = normal, 1 = echo received data)
+Bit 3: Transmit Control (see bit 2)
+Bit 2: Transmit Control (see bit 3)
+Bit 1: IRQ Enable (0 = disabled, 1 = enabled)
+Bit 0: DTR (0 = disable receiver, 1 = enable receiver)
+```
+
+**Transmit Control (Bits 3-2):**
+```
+00: Transmit interrupt disabled, RTS high, transmitter disabled
+01: Transmit interrupt enabled, RTS low, transmitter enabled  
+10: Transmit interrupt disabled, RTS low, transmitter enabled
+11: Transmit interrupt disabled, RTS low, transmit break
+```
+
+### SSC Control Register ($C0nB)
+```
+Bit 7: Stop Bits (0 = 1 stop bit, 1 = 2 stop bits)
+Bit 6: Data Bits (see bit 5)
+Bit 5: Data Bits (see bit 6)  
+Bit 4: Clock Source (0 = external, 1 = internal)
+Bit 3: Baud Rate (see bits 2-0)
+Bit 2: Baud Rate (see bits 3,1,0)
+Bit 1: Baud Rate (see bits 3,2,0)
+Bit 0: Baud Rate (see bits 3,2,1)
+```
+
+**Data Bits (Bits 6-5):**
+```
+00: 8 data bits
+01: 7 data bits
+10: 6 data bits  
+11: 5 data bits
+```
+
+**Baud Rate (Bits 3-0):**
+```
+0000: External clock
+0001: 50 baud
+0010: 75 baud
+0011: 109.92 baud
+0100: 134.58 baud
+0101: 150 baud
+0110: 300 baud
+0111: 600 baud
+1000: 1200 baud
+1001: 1800 baud
+1010: 2400 baud
+1011: 3600 baud
+1100: 4800 baud
+1101: 7200 baud
+1110: 9600 baud
+1111: 19200 baud
+```
+
+## Programming Examples
+
+### Hayes Micromodem //e Initialization
+```assembly
+; Reset and configure Hayes Micromodem in slot 1
+LDA #$03        ; Reset command
+STA $C096       ; Write to status (reset)
+LDA #$96        ; 300 baud, 8N1
+STA $C096       ; Configure
+```
+
+### Check for Incoming Data (Hayes)
+```assembly
+check_data:
+LDA $C096       ; Read status register
+AND #$08        ; Test RDRF bit
+BEQ no_data     ; Branch if no data
+LDA $C097       ; Read data register
+; Process character in A
+no_data:
+```
+
+### Send Character (Hayes)
+```assembly
+send_char:
+LDA $C096       ; Read status register  
+AND #$10        ; Test TDRE bit
+BEQ send_char   ; Wait until ready
+LDA char_to_send ; Get character
+STA $C097       ; Send character
+```
+
+### SSC Initialization  
+```assembly
+; Initialize SSC in slot 1
+LDA #$00
+STA $C099       ; Reset ACIA
+LDA #$0B        ; DTR on, no parity, no echo  
+STA $C09A       ; Write command register
+LDA #$1E        ; 9600 baud, 8N1, internal clock
+STA $C09B       ; Write control register
+```
+
+### Interrupt Service Routine
+```assembly
+irq_handler:
+LDA $C096       ; Read status (Hayes slot 1)
+BMI irq_pending ; Branch if IRQ bit set
+; Check other sources
+RTI
+
+irq_pending:
+AND #$08        ; Test RDRF
+BEQ check_tdre  ; Branch if not receive interrupt
+LDA $C097       ; Read received character
+; Process received data
+RTI
+
+check_tdre:
+AND #$10        ; Test TDRE  
+BEQ irq_exit    ; Branch if not transmit interrupt
+; Handle transmit ready
+irq_exit:
+RTI
+```
+
+## Error Handling
+
+### Common Error Conditions
+1. **Overrun Error (OVRN)**: Software not reading data fast enough
+2. **Framing Error (FE)**: Baud rate mismatch or line noise
+3. **Parity Error (PE)**: Data corruption or configuration mismatch
+
+### Error Recovery Procedures
+```assembly
+error_check:
+LDA $C096       ; Read status
+AND #$07        ; Mask error bits (PE, FE, OVRN)
+BEQ no_errors   ; Branch if no errors
+
+; Handle overrun error
+AND #$04        ; Test OVRN bit
+BEQ check_framing
+; Log overrun, increase buffer size
+
+check_framing:
+AND #$02        ; Test FE bit  
+BEQ check_parity
+; Check baud rate settings
+
+check_parity:
+AND #$01        ; Test PE bit
+BEQ no_errors
+; Verify parity configuration
+
+no_errors:
+```
+
+## Performance Considerations
+
+### Polling vs. Interrupts
+- **Polling**: Simple, predictable timing
+- **Interrupts**: Lower latency, higher throughput
+- **Hybrid**: Poll during heavy traffic, interrupt during idle
+
+### Buffer Management
+- **Input Buffering**: Essential for preventing overruns
+- **Output Buffering**: Improves system responsiveness  
+- **Buffer Sizes**: Balance memory usage vs. performance
+
+### Multi-Channel Optimization
+```assembly
+; Round-robin polling of multiple channels
+poll_channels:
+LDX channel_number  ; Current channel (0-6)
+LDA status_table,X  ; Get status register address
+STA status_ptr      ; Set up indirect addressing
+LDA (status_ptr)    ; Read status
+; Process channel
+INX                 ; Next channel
+CPX #$07           ; Check if all done
+BCC poll_channels  ; Continue if more channels
+LDX #$00           ; Reset to channel 0
+STX channel_number
+```
+
+This reference provides complete documentation for programming ACIA-based communication hardware in the Diversi-DIAL Master system.

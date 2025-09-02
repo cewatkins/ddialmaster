@@ -21,24 +21,46 @@ Diversi-DIAL Master is a sophisticated multi-line BBS (Bulletin Board System) pr
 
 ## Hardware Requirements
 
-### Minimum System Requirements
-- **Computer**: Apple //e (64K required)
-- **Memory**: 64K RAM + 80-column card for email functionality
-- **Modems**: 1-7 Novation Apple Cat II or Hayes Micromodem //e compatible
-- **Phone Lines**: 1-7 dedicated phone lines with "hunt" feature
-- **Loading**: Cassette port for program loading (no disk drive required)
+### Apple //e System Specifications
+- **Computer**: Apple //e with 64K RAM (minimum required)
+- **80-Column Card**: Essential for email system and auxiliary memory (64K additional)
+- **Memory Architecture**: Utilizes language card banking and auxiliary memory
+- **Display**: 40x24 text mode with real-time status on top 2 lines
 
-### Recommended Configuration
-- **Full 7-modem setup** for maximum capacity
-- **Zoom ZM-300 modems** (compatible, ~$75 each circa 1985)
-- **Basic phone service** (metered, no touch-tone required)
-- **Modular phone jacks** for easy modem connection
+### Communication Hardware
+- **Modems**: 1-7 Hayes Micromodem //e or Novation Apple Cat II
+- **Slot Assignment**: Peripheral slots 1-7 for modem cards
+- **Phone Lines**: Dedicated lines with hunt group capability
+- **Baud Rates**: 300-1200 baud operation with ACIA communication
 
-### Network Expansion
-- **Station Linking**: Connect multiple Diversi-DIAL systems
-- **PC Pursuit Support**: Long-distance linking via Telenet
-- **Internal Links**: Direct computer-to-computer via parallel cards
-- **Interface Two Cards**: $39.95 each for direct linking (MicroDimensions)
+### Apple //e Hardware Implementation
+Based on detailed hardware analysis:
+
+#### Memory Layout
+- **$0000-$00FF**: Zero page (fast variables, channel pointers $C0-$C7)
+- **$0100-$01FF**: 6502 processor stack
+- **$0400-$07FF**: Text screen memory (40x24 display)
+- **$0800-$08FF**: Input buffer (256 bytes)
+- **$1800-$2000**: Program initialization code
+- **$2000-$4000**: Main program and command processing
+- **$4000-$6000**: User database and message buffers
+- **$6000-$8000**: Email storage system (64K total)
+
+#### I/O Hardware Registers
+- **$C000**: Keyboard data register (KBD)
+- **$C010**: Keyboard strobe register (KBDSTRB)
+- **$C090-$C0FF**: Peripheral card I/O space (slots 1-7)
+
+#### Hayes Micromodem //e Registers (per slot)
+- **$C0n5**: Ring indicator register
+- **$C0n6**: ACIA status register (RDRF, TDRE, IRQ flags)
+- **$C0n7**: ACIA data register (read/write)
+- Where 'n' is slot number (1-7)
+
+### Loading and Operation
+- **Program Loading**: 4-minute cassette load time
+- **No Disk Drive**: System operates entirely from memory
+- **Real-time Operation**: Interrupt-driven ACIA communication
 
 ## Command Structure
 

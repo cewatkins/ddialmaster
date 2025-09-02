@@ -1,0 +1,323 @@
+# Diversi-DIAL Memory Map
+
+## Complete Apple //e Memory Layout for Diversi-DIAL Master
+
+This document provides a comprehensive memory map of the Diversi-DIAL Master system on Apple //e hardware, including all banks, I/O regions, and data structures.
+
+## Main Memory Bank ($0000-$BFFF)
+
+### Zero Page ($0000-$00FF)
+Fast-access variables and pointers for real-time operation:
+
+```
+$0000-$000F   System stack pointers and temporary variables
+$0010-$001F   Apple //e system variables (reserved)
+$0020-$003F   Temporary calculation space
+$0040-$005F   System flags and status bytes
+$0060-$007F   Command processing variables
+$0080-$009F   Timer and counter variables
+$00A0-$00BF   Input/output buffer management
+$00C0-$00C7   Channel buffer pointers (8 channels)
+              $C0: Channel 0 (console) buffer pointer
+              $C1: Channel 1 (line 1) buffer pointer  
+              $C2: Channel 2 (line 2) buffer pointer
+              $C3: Channel 3 (line 3) buffer pointer
+              $C4: Channel 4 (line 4) buffer pointer
+              $C5: Channel 5 (line 5) buffer pointer
+              $C6: Channel 6 (line 6) buffer pointer
+              $C7: Channel 7 (line 7) buffer pointer
+$00C8-$00CF   Channel buffer high bytes
+$00D0-$00D7   Channel status flags
+              Bit 7: Channel active
+              Bit 6: User authenticated  
+              Bit 5: Command mode
+              Bit 4: Chat mode
+              Bit 3: Email mode
+              Bit 2: Network link
+              Bit 1: Time warning
+              Bit 0: Disconnect pending
+$00D8-$00DF   Channel user ID numbers
+$00E0-$00E7   User authentication state
+              $E0: Console authentication
+              $E1-$E7: Line 1-7 authentication
+$00E8-$00EF   Channel timing variables
+$00F0-$00F7   Session management
+              $F0: Master session flag
+              $F1: User authentication flags
+              $F2: Main loop state flag
+              $F3: System timer flag
+              $F4: Network status
+              $F5: Email system status
+              $F6: Chat system status
+              $F7: Network link status
+$00F8-$00FF   System temporary variables
+```
+
+### Stack Area ($0100-$01FF)
+6502 processor hardware stack (grows downward from $01FF)
+
+### Text Screen Memory ($0400-$07FF)
+Apple //e 40-column text display:
+
+```
+$0400-$047F   Line 1: System status display
+              Columns 0-39: Time, user count, system stats
+$0480-$04FF   Line 2: Channel status display  
+              Columns 0-39: Active channels, call counters
+$0500-$057F   Line 3: User command echo area
+$0580-$05FF   Line 4: System messages
+$0600-$067F   Line 5: Chat display area
+$0680-$06FF   Line 6: Email notifications
+$0700-$077F   Line 7: Network status
+$0780-$07FF   Lines 8-24: Available for expansion
+```
+
+### Input Buffer Area ($0800-$08FF)
+Multi-channel input buffering:
+
+```
+$0800-$081F   Channel 0 input buffer (console, 32 bytes)
+$0820-$083F   Channel 1 input buffer (line 1, 32 bytes)
+$0840-$085F   Channel 2 input buffer (line 2, 32 bytes)
+$0860-$087F   Channel 3 input buffer (line 3, 32 bytes)
+$0880-$089F   Channel 4 input buffer (line 4, 32 bytes)
+$08A0-$08BF   Channel 5 input buffer (line 5, 32 bytes)
+$08C0-$08DF   Channel 6 input buffer (line 6, 32 bytes)
+$08E0-$08FF   Channel 7 input buffer (line 7, 32 bytes)
+```
+
+### Output Buffer Area ($0900-$09FF)
+Multi-channel output buffering:
+
+```
+$0900-$091F   Channel 0 output buffer (console, 32 bytes)
+$0920-$093F   Channel 1 output buffer (line 1, 32 bytes)
+$0940-$095F   Channel 2 output buffer (line 2, 32 bytes)
+$0960-$097F   Channel 3 output buffer (line 3, 32 bytes)
+$0980-$099F   Channel 4 output buffer (line 4, 32 bytes)
+$09A0-$09BF   Channel 5 output buffer (line 5, 32 bytes)
+$09C0-$09DF   Channel 6 output buffer (line 6, 32 bytes)
+$09E0-$09FF   Channel 7 output buffer (line 7, 32 bytes)
+```
+
+### System Variables ($1000-$17FF)
+Extended system data storage:
+
+```
+$1000-$10FF   User database (256 users maximum)
+$1100-$11FF   Password storage (encrypted)
+$1200-$12FF   System configuration data
+$1300-$13FF   Network station table
+$1400-$14FF   Chat channel management
+$1500-$15FF   Email index tables
+$1600-$16FF   System log buffer
+$1700-$17FF   Statistics and counters
+```
+
+### Program Code ($1800-$3FFF)
+Main program and subroutines:
+
+```
+$1800-$189F   System initialization routines
+$18A0-$18FF   Hardware setup and configuration
+$1900-$19FF   Memory management routines
+$1A00-$1FFF   Utility subroutines
+$2000-$22FF   Main program loop and scheduling
+$2300-$24FF   Command processing engine
+$2500-$27FF   User authentication system
+$2800-$2AFF   Main real-time loop ($28B4)
+$2B00-$2FFF   Chat system implementation
+$3000-$32FF   Email system core
+$3300-$35FF   Network linking system
+$3600-$38FF   System administration tools
+$3900-$3BFF   Error handling and recovery
+$3C00-$3FFF   Data tables and constants
+```
+
+### User Data Area ($4000-$5FFF)
+Dynamic user and session data:
+
+```
+$4000-$41FF   Active user sessions (8 channels × 64 bytes)
+$4200-$43FF   User privilege tables
+$4400-$45FF   Session timing data
+$4600-$47FF   Command history buffers
+$4800-$49FF   Chat message buffers
+$4A00-$4BFF   Private message queues
+$4C00-$4DFF   System notification queues
+$4E00-$4FFF   Network message buffers
+$5000-$51FF   Email temporary storage
+$5200-$53FF   User preference settings
+$5400-$55FF   Access control lists
+$5600-$57FF   System audit logs
+$5800-$59FF   Performance monitoring data
+$5A00-$5BFF   Backup data structures
+$5C00-$5DFF   Reserved for expansion
+$5E00-$5FFF   System constants and lookup tables
+```
+
+### Email Storage ($6000-$7FFF)
+Primary email storage area:
+
+```
+$6000-$61FF   Email header index (512 messages)
+$6200-$63FF   Email user mailbox pointers
+$6400-$65FF   Email message allocation table
+$6600-$67FF   Email folder organization
+$6800-$7FFF   Email message content storage (6K)
+```
+
+### High Memory ($8000-$BFFF)
+Extended program and data:
+
+```
+$8000-$81FF   Extended command tables
+$8200-$83FF   Network protocol handlers
+$8400-$85FF   Advanced user management
+$8600-$87FF   System security modules
+$8800-$89FF   Performance optimization code
+$8A00-$8BFF   Extended error handling
+$8C00-$8DFF   Debug and diagnostic tools
+$8E00-$8FFF   Reserved for patches
+$9000-$91FF   Hardware interface drivers
+$9200-$93FF   Modem control routines
+$9400-$95FF   Protocol implementation
+$9600-$97FF   Data compression routines
+$9800-$99FF   Encryption/decryption
+$9A00-$9BFF   Backup and restore utilities
+$9C00-$9DFF   System configuration tools
+$9E00-$9FFF   Advanced networking features
+$A000-$BFFF   Future expansion space
+```
+
+## I/O Memory Space ($C000-$C0FF)
+
+### Apple //e Softswitches ($C000-$C07F)
+System control registers:
+
+```
+$C000 KBD     Keyboard data register (read)
+$C001-$C00F   Reserved Apple //e softswitches
+$C010 KBDSTRB Keyboard strobe (read to clear)
+$C011-$C01F   Memory management softswitches
+$C020-$C02F   Cassette interface
+$C030 SPKR    Speaker toggle
+$C031-$C03F   Reserved
+$C040-$C04F   Game I/O and paddles
+$C050 TXTCLR  Graphics mode (write)
+$C051 TXTSET  Text mode (write)  
+$C052 MIXCLR  Full screen (write)
+$C053 MIXSET  Mixed mode (write)
+$C054 LOWSCR  Page 1 display (write)
+$C055 HISCR   Page 2 display (write)
+$C056 LORES   Low-res graphics (write)
+$C057 HIRES   High-res graphics (write)
+$C058-$C05F   Annunciator outputs
+$C060-$C067   Game I/O switches
+$C068-$C06F   Reserved
+$C070-$C07F   Game I/O timer
+```
+
+### Peripheral Card I/O ($C080-$C0FF)
+Individual card register space:
+
+```
+$C080-$C08F   Language Card control
+$C090-$C09F   Slot 1 I/O (Hayes Micromodem //e)
+              $C095: Ring indicator
+              $C096: ACIA status register
+              $C097: ACIA data register
+$C0A0-$C0AF   Slot 2 I/O (Hayes Micromodem //e)
+              $C0A5: Ring indicator  
+              $C0A6: ACIA status register
+              $C0A7: ACIA data register
+$C0B0-$C0BF   Slot 3 I/O (Hayes Micromodem //e)
+              $C0B5: Ring indicator
+              $C0B6: ACIA status register
+              $C0B7: ACIA data register
+$C0C0-$C0CF   Slot 4 I/O (Hayes Micromodem //e)
+              $C0C5: Ring indicator
+              $C0C6: ACIA status register
+              $C0C7: ACIA data register
+$C0D0-$C0DF   Slot 5 I/O (Hayes Micromodem //e)
+              $C0D5: Ring indicator
+              $C0D6: ACIA status register
+              $C0D7: ACIA data register
+$C0E0-$C0EF   Slot 6 I/O (Hayes Micromodem //e)
+              $C0E5: Ring indicator
+              $C0E6: ACIA status register
+              $C0E7: ACIA data register
+$C0F0-$C0FF   Slot 7 I/O (Hayes Micromodem //e)
+              $C0F5: Ring indicator
+              $C0F6: ACIA status register
+              $C0F7: ACIA data register
+```
+
+## Auxiliary Memory Bank ($0000-$BFFF)
+80-Column Card Extended Memory:
+
+```
+$0000-$1FFF   Extended user database (2048 users)
+$2000-$3FFF   Extended email storage (8K messages)
+$4000-$5FFF   Chat history archives
+$6000-$7FFF   Network station databases
+$8000-$9FFF   System backup areas
+$A000-$BFFF   Reserved for expansion
+```
+
+## Language Card Banks ($D000-$FFFF)
+
+### Bank 1 ($D000-$DFFF)
+```
+$D000-$D7FF   Extended email storage
+$D800-$DFFF   User preference databases
+```
+
+### Bank 2 ($E000-$FFFF)
+```
+$E000-$E7FF   Network protocol stacks
+$E800-$EFFF   Advanced security modules
+$F000-$F7FF   System diagnostic tools
+$F800-$FBFF   Apple //e monitor ROM (read-only)
+$FC00-$FFFF   Apple //e system ROM (read-only)
+```
+
+## Special Memory Regions
+
+### Cassette Loading Buffer ($0300-$03FF)
+Temporary storage during program loading from cassette
+
+### Graphics Memory (when enabled)
+```
+$2000-$3FFF   Hi-res graphics page 1
+$4000-$5FFF   Hi-res graphics page 2
+```
+
+### Vector Table ($FFFA-$FFFF)
+```
+$FFFA/$FFFB   NMI vector
+$FFFC/$FFFD   RESET vector  
+$FFFE/$FFFF   IRQ vector
+```
+
+## Memory Management Notes
+
+### Bank Switching Strategy
+1. **Main Operation**: Use main memory bank
+2. **Email Access**: Switch to auxiliary memory
+3. **User Database**: Use language card banking
+4. **Temporary Storage**: Zero page and stack
+
+### Performance Optimization
+1. **Zero Page**: Most frequently accessed variables
+2. **Main Memory**: Active program code and data
+3. **Auxiliary**: Large data structures
+4. **Language Card**: Extended storage
+
+### Memory Protection
+1. **ROM Areas**: Protected system code
+2. **Stack**: Hardware protected stack area
+3. **I/O Space**: Hardware register access only
+4. **User Data**: Bounds checking in software
+
+This memory map provides complete documentation of Diversi-DIAL's sophisticated use of Apple //e memory architecture for efficient multi-user BBS operation.
