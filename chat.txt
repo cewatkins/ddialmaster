@@ -164,3 +164,184 @@ ddialmaster/
 └── chat.txt           # This conversation log
 
 The project now serves as a complete archive and analysis of Diversi-DIAL Master, suitable for historians, retrocomputing enthusiasts, and anyone interested in early BBS technology and 6502 assembly programming.
+
+ADDITIONAL DOCUMENTATION ENHANCEMENT SESSION:
+Date: September 2, 2025
+
+ENHANCED DISASSEMBLY ANALYSIS:
+User requested further enhancement of the dialmstr.txt disassembly file using the comprehensive original documentation provided (DIALINST.txt, ddial.txt, extended.txt, link.txt, update.txt) to add detailed comments about documented commands and system features.
+
+MAJOR ENHANCEMENTS COMPLETED:
+
+1. COMPREHENSIVE HEADER UPDATE:
+   - Replaced basic analysis with complete system overview
+   - Added commercial licensing details ($475 for 7 lines, $50 additional)
+   - Documented complete "/" command structure with three access levels
+   - Listed all USER, PASSWORD, and MASTER commands from documentation
+   - Added hardware requirements (Apple //e, 64K RAM, 80-column card)
+   - Included network capabilities and memory architecture
+
+2. DETAILED CODE SECTION COMMENTING:
+   
+   a) Main Initialization Routine ($1800):
+      - Enhanced with cassette loading details (4-minute load time)
+      - Version number display processing
+      - Email system initialization and 64K space scanning
+      - System data copying operations
+      - Added context about Apple //e requirements
+
+   b) System Initialization Subroutine ($189A):
+      - Detailed 8-channel setup (7 modems + 1 console)
+      - Screen clearing for Apple //e text display
+      - Hardware compatibility checks
+      - Boot state management (warm vs cold boot)
+      - Channel initialization loop explanation
+
+   c) Serial Communication Handler ($1853):
+      - UART operations for Apple Cat II/Hayes modems
+      - Multi-line data processing
+      - Special command character handling ('~')
+      - Channel status management
+      - Data flow control and buffering
+
+   d) Command Parser ($224A):
+      - Main "/" command processing entry point
+      - Access level validation
+      - Command character conversion (lowercase to uppercase)
+      - Channel number validation
+      - System vs user command routing
+
+   e) Main Program Loop ($28B4):
+      - Real-time multi-user operation core
+      - System status display management
+      - Input buffer processing
+      - Timer and counter updates
+      - Multi-channel coordination
+
+3. COMPREHENSIVE DOCUMENTATION SECTION:
+   Added extensive end-of-file documentation covering:
+   
+   a) Commercial Information:
+      - Original 1985 pricing and licensing terms
+      - Certified check requirements
+      - Non-transferable license restrictions
+      - Demo version availability
+
+   b) Complete Command Reference:
+      - USER level: /H, /Q, /C, /P, /W, /E, /S, /N, /I, /V, /J, /B, /F, /D
+      - PASSWORD level: /A, /D, /L, /M, /X, /R, /K, /LG, /CF, /CM, /CT
+      - MASTER level: /DEBUG, /TRACE, /LINK, /BACKUP, /MONITOR, /STATS
+      - Email commands (within /E): R, L, S, D, F, K, Q
+      - Chat channel commands: /J, /CH, /CL, /CA, /CB, /CC, /CW, /CT
+
+   c) Email System Implementation:
+      - 80-column card requirement
+      - 64K dedicated storage space
+      - Message management features
+      - User mailbox system
+
+   d) Chat Channel Architecture:
+      - 4 independent channels
+      - Channel-specific behaviors
+      - Private messaging system
+      - Real-time broadcasting
+
+   e) Hardware Configuration:
+      - Apple //e specifications
+      - Modem compatibility (Novation, Hayes, Zoom, Transend)
+      - Phone line requirements with hunt groups
+      - Cassette port loading system
+
+   f) Network Linking:
+      - PC Pursuit integration ($25/month)
+      - Station-to-station linking
+      - Interface Two parallel cards
+      - Multi-station management
+
+   g) Security and Access Control:
+      - Three-tier access system
+      - Dual password implementation
+      - System password management
+      - Time limits and restrictions
+
+   h) Memory Layout:
+      - Detailed memory map
+      - System variable locations
+      - Email storage organization
+      - Command processing areas
+
+4. FLOWCHART ENHANCEMENTS:
+   
+   Updated FLOWCHART.txt with:
+   - Corrected title (Diversi-DIAL vs Divers-DIAL)
+   - Enhanced system overview section
+   - Added detailed operational descriptions
+   - Included commercial and historical context
+   - Updated key addresses and memory locations
+   - Comprehensive feature descriptions
+
+5. HISTORICAL AND TECHNICAL CONTEXT:
+   
+   Added comprehensive analysis of:
+   - 1985 BBS technology significance
+   - Pre-Internet networking capabilities
+   - Commercial software distribution methods
+   - Apple //e platform utilization
+   - Professional telecommunications features
+   - Multi-user system design on 6502
+
+TECHNICAL INSIGHTS ENHANCED:
+
+System Architecture Understanding:
+- Confirmed 8-channel operation (7 modems + console)
+- Verified real-time multi-user capabilities
+- Documented sophisticated command parsing
+- Identified email system with 80-column requirement
+- Confirmed network linking architecture
+
+Command System Analysis:
+- Three-tier access control implementation
+- Comprehensive "/" command prefix system
+- Parameter parsing and validation
+- Access level enforcement
+- Dynamic command routing
+
+Memory Management:
+- 64K Apple //e memory utilization
+- Email storage space allocation
+- System variable organization
+- Buffer management for multiple users
+- Self-modifying code usage
+
+Hardware Integration:
+- UART-based modem communication
+- Apple //e specific hardware features
+- 80-column card integration
+- Cassette port loading system
+- Parallel card networking
+
+DOCUMENTATION QUALITY:
+The enhanced disassembly now provides:
+- Line-by-line code explanation with historical context
+- Complete feature documentation based on original manuals
+- Hardware setup and configuration details
+- Commercial and licensing information
+- Network architecture and capabilities
+- User and operator guidance
+- Historical significance and preservation value
+
+FINAL PROJECT STATUS: COMPREHENSIVE ANALYSIS COMPLETE
+The Diversi-DIAL project now contains the most complete documentation possible for this historical BBS system, combining:
+- Detailed 6502 assembly analysis
+- Original documentation integration
+- Hardware and software requirements
+- Commercial and historical context
+- Complete user and operator guides
+- Technical architecture documentation
+
+This represents a complete preservation effort suitable for:
+- Computer history research
+- Retrocomputing implementation
+- BBS archaeology and analysis
+- 6502 programming education
+- Telecommunications history study
